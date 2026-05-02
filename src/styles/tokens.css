@@ -1,0 +1,69 @@
+/* ============================================
+   SEPAKA DESIGN TOKENS
+   The visual DNA of the brand in CSS variables
+   ============================================ */
+
+:root {
+  /* --- Colors --- */
+  --color-void: #0D0C0A;          /* near-black background */
+  --color-void-soft: #161513;     /* slightly lighter for cards */
+  --color-void-border: #2A2825;   /* subtle borders on dark bg */
+  --color-parchment: #F5F2EC;     /* warm off-white text + light bg */
+  --color-parchment-muted: #C4BFB6; /* secondary text */
+  --color-leather-warm: #8B5E3C;  /* primary leather accent */
+  --color-leather-deep: #4A2E1A;  /* deep leather hover states */
+  --color-metal: #B8A898;         /* brushed metal — zippers, hardware */
+  --color-metal-light: #D4CEC8;   /* light metallic for fine details */
+
+  /* --- Typography --- */
+  --font-serif: 'Cormorant Garamond', Georgia, serif;
+  --font-sans: 'Inter', system-ui, sans-serif;
+
+  /* --- Font Sizes --- */
+  --text-xs: 0.75rem;     /* 12px — labels, metadata */
+  --text-sm: 0.875rem;    /* 14px — body small */
+  --text-base: 1rem;      /* 16px — body */
+  --text-lg: 1.125rem;    /* 18px — lead text */
+  --text-xl: 1.25rem;     /* 20px */
+  --text-2xl: 1.5rem;     /* 24px */
+  --text-3xl: 1.875rem;   /* 30px */
+  --text-4xl: 2.25rem;    /* 36px */
+  --text-5xl: 3rem;       /* 48px */
+  --text-6xl: 3.75rem;    /* 60px */
+  --text-7xl: 4.5rem;     /* 72px — hero display */
+
+  /* --- Letter Spacing --- */
+  --tracking-tight: -0.02em;
+  --tracking-normal: 0em;
+  --tracking-wide: 0.05em;
+  --tracking-wider: 0.1em;
+  --tracking-widest: 0.2em;   /* nav items, labels */
+
+  /* --- Spacing Scale --- */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-12: 3rem;
+  --space-16: 4rem;
+  --space-20: 5rem;
+  --space-24: 6rem;
+  --space-32: 8rem;
+
+  /* --- Motion --- */
+  --ease-luxury: cubic-bezier(0.25, 0.1, 0.25, 1);
+  --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-out: cubic-bezier(0, 0, 0.2, 1);
+  --duration-fast: 150ms;
+  --duration-base: 300ms;
+  --duration-slow: 600ms;
+  --duration-cinematic: 1200ms;
+
+  /* --- Border Radius --- */
+  --radius-sm: 2px;
+  --radius-md: 4px;
+  --radius-lg: 8px;
+  --radius-full: 9999px;
+}

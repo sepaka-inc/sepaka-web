@@ -1,0 +1,45 @@
+@import '../styles/tokens.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    background-color: var(--color-void);
+    color: var(--color-parchment);
+    font-family: var(--font-sans);
+    font-size: var(--text-base);
+    line-height: 1.6;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-serif);
+    letter-spacing: var(--tracking-tight);
+    line-height: 1.1;
+    color: var(--color-parchment);
+  }
+
+  ::selection {
+    background: var(--color-leather-warm);
+    color: var(--color-parchment);
+  }
+
+  /* Scrollbar — minimal, on-brand */
+  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar-track { background: var(--color-void); }
+  ::-webkit-scrollbar-thumb { background: var(--color-void-border); border-radius: 2px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--color-metal); }
+}
