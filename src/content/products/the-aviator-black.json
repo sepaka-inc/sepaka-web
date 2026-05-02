@@ -1,0 +1,39 @@
+{
+  "id": "the-aviator",
+  "slug": "the-aviator-midnight-black",
+  "name": "The Aviator",
+  "tagline": "Worn by those who move first.",
+  "description": "Full-grain lamb, hand-selected for natural variation. A silhouette that references the golden era of flight without quoting it. The kind of jacket that gets better with every kilometer.",
+  "leatherType": "lamb",
+  "origin": "Full-grain lamb, vegetable-tanned",
+  "weight": "1.2 kg",
+  "lining": "100% silk, midnight black",
+  "hardware": "Antique brass YKK",
+  "variants": [
+    {
+      "name": "Midnight Black",
+      "hex": "#1A1715",
+      "slug": "midnight-black",
+      "images": {
+        "hero": "/images/products/aviator-black-hero.jpg",
+        "gallery": [],
+        "texture": "/images/products/aviator-black-texture.jpg",
+        "worn": "/images/products/aviator-black-worn.jpg",
+        "label": "/images/products/label-detail.jpg"
+      },
+      "inStock": true,
+      "inventory": 12
+    }
+  ],
+  "sizes": ["XS", "S", "M", "L", "XL", "XXL"],
+  "price": 149900,
+  "careInstructions": [
+    "Wipe clean with a dry cloth. Never machine wash.",
+    "Condition with leather balm every 6 months.",
+    "Store on a wide shoulder hanger. Never fold."
+  ],
+  "patinaNote": "Lamb darkens and softens along stress lines — collar and cuffs develop first.",
+  "craftingTime": "14 hours per jacket",
+  "featured": true,
+  "order": 1
+}
