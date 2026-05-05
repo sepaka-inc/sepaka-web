@@ -1,0 +1,99 @@
+---
+description: 
+alwaysApply: true
+---
+
+Stack: Next.js 15 App Router, TypeScript, Tailwind, Framer Motion, Stripe
+
+═══════════════════════════════════════════
+VISUAL DIRECTION — reference: Bottega Veneta homepage
+═══════════════════════════════════════════
+
+HOMEPAGE HERO:
+- Full viewport height, full bleed — image or video edge to edge, no padding
+- Navbar floats transparently over the hero — white text, no background
+- NO large hero headline on first load — let the visual breathe
+- After 1.2s: ONE line of Bodoni text fades in at lower center
+  Example: "Worn in. Never out."  or  "Leather that remembers."
+- Two ghost CTA buttons near bottom center (like BV layout):
+  [  Discover the Collection  ]  [  Shop Jackets  ]
+- Thin white borders on CTAs, Inter label-size text, spaced caps
+- On scroll: hero fades, next section appears
+
+OVERALL SITE FEEL:
+- Cinematic. Slow. Intentional. Every element earns its place.
+- Generous negative space — when in doubt, add more breathing room
+- Images always full-bleed or large — never small thumbnails
+- Text is sparse — one strong line beats three weak ones
+- No decorative elements, no icons in headings, no gradients
+
+DARK/LIGHT BALANCE:
+- Homepage: dark first (void #0D0C0A background)
+- Product pages: can mix — dark hero, light product info panel
+- Journal/About: parchment (#F5F2EC) background — intentional contrast
+- The switch from dark to light signals a content shift to the visitor
+
+TYPOGRAPHY RULES:
+- Bodoni Moda: only for headlines, product names, section titles (24px+)
+- Bodoni italic: for emotional sublines, taglines, pull quotes
+- Inter light (300): all body copy
+- Inter medium (500): navigation, labels, buttons — all caps, wide tracking
+- Never use Bodoni below 24px — hairlines disappear
+
+COLOR RULES:
+- Primary bg: #0D0C0A (void) — not pure black, warm undertone
+- Primary text: #F5F2EC (parchment) — not pure white
+- Accent: #8B5E3C (leather) — used sparingly: underlines, cart count, dividers
+- Borders: #2A2825 — very subtle, almost invisible
+- Never use generic blue, red, or green anywhere on the site
+
+ANIMATION RULES:
+- Ease: cubic-bezier(0.25, 0.1, 0.25, 1) — always
+- Duration: 600-1200ms for reveals, 300-400ms for hovers
+- Direction: elements fade UP into place (translateY 24px → 0)
+- Stagger: when multiple elements reveal, 80-120ms between each
+- Always wrap Framer Motion in useReducedMotion() check
+- Never bounce, never overshoot, never spin — all motion is calm
+
+═══════════════════════════════════════════
+PRODUCT + COMMERCE
+═══════════════════════════════════════════
+
+PRODUCTS: 5 designs × 2 colorways = 10 SKUs
+- The Frontier (Lamb) — Midnight Black / Tobacco
+- The Warden (Lamb) — Midnight Black / Cognac  
+- The Nomad (Lamb) — Midnight / Sand
+- The Heir (Lamb) — Black / Ivory
+- The Sentinel (Camel) — Natural / Bark
+Types: src/types/product.ts
+Data: src/content/products/ (JSON files)
+
+FOLDER RULES:
+- Page sections (used once): src/components/sections/
+- Reusable atoms: src/components/ui/
+- Product components: src/components/product/
+- Layout: src/components/layout/
+
+COMPONENT RULES:
+- Mobile first always — design for 390px then scale up
+- Use container-luxury class for max-width + padding
+- Use section-padding for vertical section rhythm
+- Images: always next/image with explicit width/height and meaningful alt text
+- Placeholder images: use aspect-ratio divs with bg-void-2 until photos arrive
+
+═══════════════════════════════════════════
+CURRENT BUILD STATUS
+═══════════════════════════════════════════
+Phase 1 COMPLETE: Tailwind tokens, layout.tsx, globals.css, Navbar
+Phase 2 IN PROGRESS: Homepage sections
+- Photos arriving in ~30 days
+- Use placeholder divs with correct aspect ratios until then
+- Hero placeholder: 16:9 or full viewport dark div
+- Product card placeholder: 3:4 aspect ratio dark div
+
+WHEN ASKED TO BUILD A SECTION:
+1. Build mobile layout first
+2. Add desktop breakpoints second  
+3. Use placeholder divs where images will go
+4. Wire up Framer Motion reveal animations
+5. Show complete file — never partial

@@ -213,7 +213,7 @@
     justify-content: center;
     gap: 0.5rem;
     padding: 0.875rem 2.5rem;
-    border: 0.5px solid #8A8480;
+    border: 0.5px solid #8a8480;
     color: var(--color-parchment);
     font-family: var(--font-sans);
     font-size: 0.6875rem;
@@ -225,7 +225,7 @@
   }
 
   .btn-ghost:hover {
-    border-color: theme('colors.parchment.DEFAULT');
+    border-color: var(--color-parchment);
     background-color: rgba(245, 242, 236, 0.04);
   }
 
