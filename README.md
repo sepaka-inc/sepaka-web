@@ -1,36 +1,68 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# SEPAKA
 
-## Getting Started
+Premium unisex leather jackets — marketing site and storefront (private repository).
 
-First, run the development server:
+## Tech stack
+
+| Layer | Notes |
+| --- | --- |
+| **Framework** | Next.js 16 (App Router), React 19, TypeScript |
+| **Styling** | Tailwind CSS v4, design tokens in `tailwind.config.ts` + `src/styles/tokens.css` |
+| **Motion** | Framer Motion |
+| **Commerce** | Stripe (integration planned; not yet in dependencies) |
+| **Hosting / analytics** | Vercel, `@vercel/analytics` |
+
+Supporting libraries include `lucide-react`, `clsx`, and `tailwind-merge`.
+
+## Run locally
 
 ```bash
+git clone <repository-url>
+cd sepaka-web
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000). Production build: `npm run build` then `npm run start`.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Folder structure (`src/`)
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```
+src/
+├── app/                 # App Router — root layout, globals, home page; route groups (marketing) / (shop) reserved
+├── components/
+│   ├── layout/          # Navbar and shared chrome
+│   ├── sections/        # Page sections (e.g. Hero)
+│   ├── product/         # Product UI (reserved)
+│   └── ui/              # Shared primitives (reserved)
+├── content/
+│   └── products/        # Product JSON
+├── styles/              # CSS tokens imported by `globals.css`
+├── types/               # Shared TypeScript types (e.g. product model)
+├── hooks/               # Client hooks (reserved)
+└── lib/                 # Utilities (reserved)
+```
 
-## Learn More
+Static assets: `public/` (e.g. brand images, hero video).
 
-To learn more about Next.js, take a look at the following resources:
+## Build status
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+| Phase | Status |
+| --- | --- |
+| **Foundation** | **Complete** — Tailwind tokens, typography (Bodoni Moda + Inter), root `layout`, global styles, Navbar |
+| **Homepage** | **In progress** — Full-bleed video hero, Bottega-inspired nav, placeholder sections below the fold for scroll testing; photography and real sections to follow |
+| **Shop & product** | **Not started** — Route group `(shop)`, product grid, PDPs, cart |
+| **Stripe / checkout** | **Planned** |
+| **Journal / story pages** | **Planned** |
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Environment variables
 
-## Deploy on Vercel
+**Current build:** none required (no `process.env` usage in the codebase yet).
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+**Planned for Stripe (keys only — do not commit values):**
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- `STRIPE_SECRET_KEY`
+- `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY`
+- `STRIPE_WEBHOOK_SECRET`
+
+Add others (e.g. `NEXT_PUBLIC_SITE_URL`) when checkout and webhooks are implemented.
