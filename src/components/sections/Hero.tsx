@@ -4,6 +4,9 @@ import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { motion, useReducedMotion } from 'framer-motion'
 
+const EASE_LUXURY = [0.25, 0.1, 0.25, 1] as const
+const EASE_CINEMATIC = [0.76, 0, 0.24, 1] as const
+
 // ── Animation variants ────────────────────────────────────
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -23,7 +26,7 @@ const itemVariants = {
     y: 0,
     transition: {
       duration: 0.9,
-      ease: [0.25, 0.1, 0.25, 1],
+      ease: EASE_LUXURY,
     },
   },
 }
@@ -35,7 +38,7 @@ const wordmarkVariants = {
     letterSpacing: '0.18em',
     transition: {
       duration: 1.2,
-      ease: [0.25, 0.1, 0.25, 1],
+      ease: EASE_LUXURY,
     },
   },
 }
@@ -46,7 +49,7 @@ const overlayVariants = {
     opacity: 0.5,
     transition: {
       duration: 1.8,
-      ease: 'easeInOut',
+      ease: EASE_CINEMATIC,
     },
   },
 }

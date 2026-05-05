@@ -5,6 +5,9 @@ import Link from 'next/link'
 import { ShoppingBag, Menu, X } from 'lucide-react'
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
 
+const EASE_LUXURY = [0.25, 0.1, 0.25, 1] as const
+const EASE_CINEMATIC = [0.76, 0, 0.24, 1] as const
+
 // ── Nav config ────────────────────────────────────────────
 const NAV_LINKS = [
   { label: 'Shop', href: '/shop' },
@@ -18,14 +21,14 @@ const menuVariants = {
     x: '100%',
     transition: {
       duration: 0.6,
-      ease: [0.76, 0, 0.24, 1],
+      ease: EASE_CINEMATIC,
     },
   },
   open: {
     x: '0%',
     transition: {
       duration: 0.6,
-      ease: [0.76, 0, 0.24, 1],
+      ease: EASE_CINEMATIC,
     },
   },
 }
@@ -42,7 +45,7 @@ const menuItemVariants = {
     transition: {
       delay: 0.25 + i * 0.07,
       duration: 0.5,
-      ease: [0.25, 0.1, 0.25, 1],
+      ease: EASE_LUXURY,
     },
   }),
 }
@@ -50,11 +53,11 @@ const menuItemVariants = {
 const overlayVariants = {
   closed: {
     opacity: 0,
-    transition: { duration: 0.4, ease: 'easeInOut' },
+    transition: { duration: 0.4, ease: EASE_LUXURY },
   },
   open: {
     opacity: 1,
-    transition: { duration: 0.4, ease: 'easeInOut' },
+    transition: { duration: 0.4, ease: EASE_LUXURY },
   },
 }
 
