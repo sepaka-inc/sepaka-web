@@ -10,40 +10,29 @@ const config: Config = {
       current: 'currentColor',
       white: '#FFFFFF',
       black: '#000000',
-
-      // ── Core surfaces ──────────────────────────
       void: {
-        DEFAULT: '#0D0C0A', // Primary bg — near-black, warm
-        2: '#161513', // Cards, elevated surfaces
-        3: '#1E1C19', // Modals, drawers
+        DEFAULT: '#0D0C0A',
+        2: '#161513',
+        3: '#2A2825',
       },
-      border: {
-        DEFAULT: '#2A2825', // Subtle dividers
-        strong: '#3D3A36', // Hover borders
-      },
-
-      // ── Text ───────────────────────────────────
       parchment: {
-        DEFAULT: '#F5F2EC', // Primary text on dark
-        2: '#C4BFB6', // Secondary — muted
-        3: '#8A8480', // Tertiary — very muted
-        4: '#5A5652', // Disabled
+        DEFAULT: '#F5F2EC',
+        2: '#EDEAE4',
+        3: '#E0DDD7',
       },
-
-      // ── Brand accents ──────────────────────────
       leather: {
-        DEFAULT: '#8B5E3C', // Primary accent
-        2: '#6B4428', // Hover / pressed
-        3: '#4A2E1A', // Deep — headers on light bg
-        light: '#B07D55', // Light variant
+        DEFAULT: '#8B5E3C',
+        2: '#6B4428',
+        3: '#4A2E1A',
+        light: '#B07D55',
       },
       camel: {
-        DEFAULT: '#C49A6C', // Camel leather accent
-        2: '#A67C4E', // Hover
+        DEFAULT: '#C49A6C',
+        2: '#A67C4E',
       },
       metal: {
-        DEFAULT: '#B8A898', // Brushed — zippers, hardware
-        2: '#D4CEC8', // Light metallic
+        DEFAULT: '#B8A898',
+        2: '#9A8878',
       },
     },
 

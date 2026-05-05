@@ -1,101 +1,55 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import { ShoppingBag, Menu, X } from 'lucide-react'
-import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
+import { ShoppingBag, Search, User } from 'lucide-react'
+import { motion, AnimatePresence } from 'framer-motion'
 
-const EASE_LUXURY = [0.25, 0.1, 0.25, 1] as const
-const EASE_CINEMATIC = [0.76, 0, 0.24, 1] as const
-
-// ── Nav config ────────────────────────────────────────────
 const NAV_LINKS = [
   { label: 'Shop', href: '/shop' },
+  { label: 'The Story', href: '/story' },
   { label: 'Journal', href: '/journal' },
   { label: 'About', href: '/about' },
 ] as const
 
-// ── Animation variants ────────────────────────────────────
+const EASE_CINEMATIC = [0.76, 0, 0.24, 1] as const
+const EASE_LUXURY = [0.25, 0.1, 0.25, 1] as const
+
 const menuVariants = {
   closed: {
     x: '100%',
-    transition: {
-      duration: 0.6,
-      ease: EASE_CINEMATIC,
-    },
+    transition: { duration: 0.6, ease: EASE_CINEMATIC },
   },
   open: {
     x: '0%',
-    transition: {
-      duration: 0.6,
-      ease: EASE_CINEMATIC,
-    },
+    transition: { duration: 0.6, ease: EASE_CINEMATIC },
   },
 }
 
-const menuItemVariants = {
-  closed: {
-    opacity: 0,
-    y: 24,
-    transition: { duration: 0.2 },
-  },
+const itemVariants = {
+  closed: { opacity: 0, y: 20 },
   open: (i: number) => ({
     opacity: 1,
     y: 0,
     transition: {
-      delay: 0.25 + i * 0.07,
+      delay: 0.15 + i * 0.07,
       duration: 0.5,
       ease: EASE_LUXURY,
     },
   }),
 }
 
-const overlayVariants = {
-  closed: {
-    opacity: 0,
-    transition: { duration: 0.4, ease: EASE_LUXURY },
-  },
-  open: {
-    opacity: 1,
-    transition: { duration: 0.4, ease: EASE_LUXURY },
-  },
-}
-
-// ── Component ─────────────────────────────────────────────
 export default function Navbar() {
-  const [scrolled, setScrolled] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
-  const [cartCount] = useState(0) // wired to cart state in Phase 5
-  const prefersReducedMotion = useReducedMotion()
-
-  // ── Scroll detection ──────────────────────────────────
-  // Navbar becomes solid after scrolling 60px
-  const handleScroll = useCallback(() => {
-    setScrolled(window.scrollY > 60)
-  }, [])
+  const [cartCount] = useState(0)
 
   useEffect(() => {
-    window.addEventListener('scroll', handleScroll, { passive: true })
-    return () => window.removeEventListener('scroll', handleScroll)
-  }, [handleScroll])
-
-  // ── Body scroll lock ──────────────────────────────────
-  // Prevents page scrolling while mobile menu is open
-  useEffect(() => {
-    if (menuOpen) {
-      document.body.style.overflow = 'hidden'
-      document.body.style.paddingRight = '3px' // compensate scrollbar
-    } else {
-      document.body.style.overflow = ''
-      document.body.style.paddingRight = ''
-    }
+    document.body.style.overflow = menuOpen ? 'hidden' : ''
     return () => {
       document.body.style.overflow = ''
-      document.body.style.paddingRight = ''
     }
   }, [menuOpen])
 
-  // ── Close menu on Escape key ──────────────────────────
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape') setMenuOpen(false)
@@ -104,279 +58,357 @@ export default function Navbar() {
     return () => window.removeEventListener('keydown', onKey)
   }, [])
 
-  const closeMenu = () => setMenuOpen(false)
+  const LINK_COLOR = '#0D0C0A'
+  const LINK_COLOR_MUTED = '#2A2825'
 
   return (
     <>
-      {/* ══════════════════════════════════════════
-          HEADER BAR
-      ══════════════════════════════════════════ */}
       <header
         role="banner"
-        className={[
-          'fixed inset-x-0 top-0 z-50',
-          'ease-luxury transition-all duration-600',
-          scrolled
-            ? 'bg-void/96 border-border border-b backdrop-blur-sm'
-            : 'border-b border-transparent bg-transparent',
-        ].join(' ')}
+        style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          zIndex: 50,
+          backgroundColor: '#FFFFFF',
+          borderBottom: '0.5px solid #E8E4DE',
+        }}
       >
-        <div className="container-luxury">
+        <div
+          style={{
+            maxWidth: '1440px',
+            margin: '0 auto',
+            paddingLeft: '2rem',
+            paddingRight: '2rem',
+            height: '64px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            position: 'relative',
+          }}
+        >
+          <Link
+            href="/"
+            aria-label="SEPAKA homepage"
+            style={{ textDecoration: 'none', flexShrink: 0, zIndex: 1 }}
+          >
+            <img
+              src="/images/brand/sepaka-logo.svg"
+              alt="SEPAKA"
+              style={{
+                height: '28px',
+                width: 'auto',
+                display: 'block',
+                filter: 'brightness(0)',
+              }}
+            />
+          </Link>
+
           <nav
             role="navigation"
             aria-label="Main navigation"
-            className="flex h-16 items-center justify-between md:h-20"
+            style={{
+              position: 'absolute',
+              left: '50%',
+              top: '50%',
+              transform: 'translate(-50%, -50%)',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '2.75rem',
+            }}
+            className="desktop-nav"
           >
-            {/* ── Wordmark ──────────────────────── */}
-            <Link
-              href="/"
-              onClick={closeMenu}
-              aria-label="SEPAKA — Return to homepage"
-              className={[
-                'font-serif font-bold tracking-[0.18em]',
-                'text-parchment text-[1.1rem] uppercase',
-                'ease-luxury transition-colors duration-400',
-                'hover:text-metal',
-                // Subtle underline reveal on hover
-                'relative after:absolute after:bottom-[-2px] after:left-0',
-                'after:bg-leather after:h-px after:w-0',
-                'after:ease-luxury after:transition-all after:duration-500',
-                'hover:after:w-full',
-              ].join(' ')}
+            {NAV_LINKS.map((link) => (
+              <Link
+                key={link.href}
+                href={link.href}
+                style={{
+                  fontFamily: 'var(--font-inter), system-ui, sans-serif',
+                  fontSize: '0.75rem',
+                  fontWeight: 400,
+                  letterSpacing: '0.04em',
+                  textDecoration: 'none',
+                  color: LINK_COLOR_MUTED,
+                  transition: 'color 250ms',
+                  whiteSpace: 'nowrap',
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.color = LINK_COLOR
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.color = LINK_COLOR_MUTED
+                }}
+              >
+                {link.label}
+              </Link>
+            ))}
+          </nav>
+
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.25rem',
+              flexShrink: 0,
+              zIndex: 1,
+            }}
+          >
+            <button
+              type="button"
+              aria-label="Search"
+              style={{
+                background: 'none',
+                border: 'none',
+                cursor: 'pointer',
+                padding: '8px',
+                color: LINK_COLOR_MUTED,
+                display: 'flex',
+                alignItems: 'center',
+                transition: 'color 250ms',
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.color = LINK_COLOR
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.color = LINK_COLOR_MUTED
+              }}
             >
-              SEPAKA
+              <Search size={20} strokeWidth={1.25} aria-hidden="true" />
+            </button>
+
+            <button
+              type="button"
+              aria-label="My account"
+              style={{
+                background: 'none',
+                border: 'none',
+                cursor: 'pointer',
+                padding: '8px',
+                color: LINK_COLOR_MUTED,
+                display: 'flex',
+                alignItems: 'center',
+                transition: 'color 250ms',
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.color = LINK_COLOR
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.color = LINK_COLOR_MUTED
+              }}
+            >
+              <User size={20} strokeWidth={1.25} aria-hidden="true" />
+            </button>
+
+            <Link
+              href="/cart"
+              aria-label={
+                cartCount > 0 ? `Cart — ${cartCount} items` : 'Cart'
+              }
+              style={{
+                position: 'relative',
+                padding: '8px',
+                color: LINK_COLOR_MUTED,
+                display: 'flex',
+                alignItems: 'center',
+                textDecoration: 'none',
+                transition: 'color 250ms',
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.color = LINK_COLOR
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.color = LINK_COLOR_MUTED
+              }}
+            >
+              <ShoppingBag size={20} strokeWidth={1.25} aria-hidden="true" />
+              {cartCount > 0 && (
+                <span
+                  style={{
+                    position: 'absolute',
+                    top: '4px',
+                    right: '4px',
+                    width: '16px',
+                    height: '16px',
+                    borderRadius: '50%',
+                    backgroundColor: '#8B5E3C',
+                    color: '#fff',
+                    fontSize: '9px',
+                    fontWeight: 600,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  }}
+                >
+                  {cartCount}
+                </span>
+              )}
             </Link>
 
-            {/* ── Desktop navigation ────────────── */}
-            <ul role="list" className="hidden items-center gap-10 md:flex">
-              {NAV_LINKS.map((link) => (
-                <li key={link.href}>
-                  <Link
-                    href={link.href}
-                    className={[
-                      'text-label text-parchment-2',
-                      'ease-luxury transition-colors duration-300',
-                      'hover:text-parchment',
-                      'group relative',
-                      // Underline that grows from left on hover
-                      'after:absolute after:bottom-[-3px] after:left-0',
-                      'after:bg-leather after:h-px after:w-0',
-                      'after:ease-luxury after:transition-all after:duration-400',
-                      'hover:after:w-full',
-                    ].join(' ')}
-                  >
-                    {link.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-
-            {/* ── Right controls ────────────────── */}
-            <div className="flex items-center gap-3 md:gap-4">
-              {/* Cart icon */}
-              <Link
-                href="/cart"
-                aria-label={`Shopping cart${cartCount > 0 ? ` — ${cartCount} item${cartCount > 1 ? 's' : ''}` : ''}`}
-                className={[
-                  'relative p-1.5',
-                  'text-parchment-2 hover:text-parchment',
-                  'ease-luxury transition-colors duration-300',
-                ].join(' ')}
+            <button
+              type="button"
+              className="mobile-menu-btn"
+              aria-label={menuOpen ? 'Close menu' : 'Open menu'}
+              aria-expanded={menuOpen}
+              onClick={() => setMenuOpen((v) => !v)}
+              style={{
+                background: 'none',
+                border: 'none',
+                cursor: 'pointer',
+                padding: '8px',
+                color: LINK_COLOR_MUTED,
+                display: 'flex',
+                alignItems: 'center',
+              }}
+            >
+              <svg
+                width="22"
+                height="22"
+                viewBox="0 0 22 22"
+                fill="none"
+                aria-hidden="true"
               >
-                <ShoppingBag size={19} strokeWidth={1.25} aria-hidden="true" />
-                {cartCount > 0 && (
-                  <span
-                    aria-hidden="true"
-                    className={[
-                      'absolute -top-0.5 -right-0.5',
-                      'h-4 w-4 rounded-full',
-                      'bg-leather text-parchment',
-                      'font-sans text-[9px] font-medium',
-                      'flex items-center justify-center',
-                      'leading-none',
-                    ].join(' ')}
-                  >
-                    {cartCount}
-                  </span>
-                )}
-              </Link>
-
-              {/* Mobile menu button */}
-              <button
-                className={[
-                  'p-1.5 md:hidden',
-                  'text-parchment-2 hover:text-parchment',
-                  'ease-luxury transition-colors duration-300',
-                ].join(' ')}
-                onClick={() => setMenuOpen((v) => !v)}
-                aria-label={
-                  menuOpen ? 'Close navigation menu' : 'Open navigation menu'
-                }
-                aria-expanded={menuOpen}
-                aria-controls="mobile-menu"
-              >
-                <AnimatePresence mode="wait" initial={false}>
-                  {menuOpen ? (
-                    <motion.span
-                      key="close"
-                      initial={
-                        prefersReducedMotion ? {} : { opacity: 0, rotate: -45 }
-                      }
-                      animate={{ opacity: 1, rotate: 0 }}
-                      exit={
-                        prefersReducedMotion ? {} : { opacity: 0, rotate: 45 }
-                      }
-                      transition={{ duration: 0.2 }}
-                    >
-                      <X size={20} strokeWidth={1.25} aria-hidden="true" />
-                    </motion.span>
-                  ) : (
-                    <motion.span
-                      key="open"
-                      initial={
-                        prefersReducedMotion ? {} : { opacity: 0, rotate: 45 }
-                      }
-                      animate={{ opacity: 1, rotate: 0 }}
-                      exit={
-                        prefersReducedMotion ? {} : { opacity: 0, rotate: -45 }
-                      }
-                      transition={{ duration: 0.2 }}
-                    >
-                      <Menu size={20} strokeWidth={1.25} aria-hidden="true" />
-                    </motion.span>
-                  )}
-                </AnimatePresence>
-              </button>
-            </div>
-          </nav>
+                <line
+                  x1="3"
+                  y1="6"
+                  x2="19"
+                  y2="6"
+                  stroke="currentColor"
+                  strokeWidth="1.25"
+                  strokeLinecap="round"
+                />
+                <line
+                  x1="3"
+                  y1="11"
+                  x2="19"
+                  y2="11"
+                  stroke="currentColor"
+                  strokeWidth="1.25"
+                  strokeLinecap="round"
+                />
+                <line
+                  x1="3"
+                  y1="16"
+                  x2="19"
+                  y2="16"
+                  stroke="currentColor"
+                  strokeWidth="1.25"
+                  strokeLinecap="round"
+                />
+              </svg>
+            </button>
+          </div>
         </div>
+
+        <style>{`
+          .desktop-nav { display: flex !important; }
+          .mobile-menu-btn { display: none !important; }
+          @media (max-width: 767px) {
+            .desktop-nav { display: none !important; }
+            .mobile-menu-btn { display: flex !important; }
+          }
+        `}</style>
       </header>
 
-      {/* ══════════════════════════════════════════
-          MOBILE MENU
-      ══════════════════════════════════════════ */}
       <AnimatePresence>
         {menuOpen && (
           <>
-            {/* Backdrop — tinted overlay */}
             <motion.div
               key="backdrop"
-              variants={overlayVariants}
-              initial="closed"
-              animate="open"
-              exit="closed"
-              className="bg-void/60 fixed inset-0 z-40 backdrop-blur-sm md:hidden"
-              onClick={closeMenu}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.3 }}
+              onClick={() => setMenuOpen(false)}
               aria-hidden="true"
+              style={{
+                position: 'fixed',
+                inset: 0,
+                zIndex: 40,
+                backgroundColor: 'rgba(13,12,10,0.15)',
+              }}
             />
-
-            {/* Menu panel — slides from right */}
             <motion.div
-              key="menu-panel"
-              id="mobile-menu"
-              role="dialog"
-              aria-modal="true"
-              aria-label="Navigation menu"
+              key="panel"
               variants={menuVariants}
               initial="closed"
               animate="open"
               exit="closed"
-              className={[
-                'fixed top-0 right-0 bottom-0 z-60',
-                'w-full max-w-sm',
-                'bg-void-2 border-border border-l',
-                'flex flex-col',
-                'px-8 pt-20 pb-10',
-                'md:hidden',
-              ].join(' ')}
+              role="dialog"
+              aria-modal="true"
+              aria-label="Navigation menu"
+              style={{
+                position: 'fixed',
+                top: 0,
+                right: 0,
+                bottom: 0,
+                zIndex: 60,
+                width: '100%',
+                maxWidth: '360px',
+                backgroundColor: '#FFFFFF',
+                borderLeft: '0.5px solid #E8E4DE',
+                display: 'flex',
+                flexDirection: 'column',
+                paddingTop: '5rem',
+                paddingBottom: '2.5rem',
+                paddingLeft: '2rem',
+                paddingRight: '2rem',
+              }}
             >
-              {/* Nav links */}
-              <ul role="list" className="flex flex-1 flex-col">
+              <ul
+                style={{
+                  listStyle: 'none',
+                  margin: 0,
+                  padding: 0,
+                  flex: 1,
+                }}
+              >
                 {NAV_LINKS.map((link, i) => (
                   <motion.li
                     key={link.href}
                     custom={i}
-                    variants={menuItemVariants}
+                    variants={itemVariants}
                     initial="closed"
                     animate="open"
                     exit="closed"
                   >
                     <Link
                       href={link.href}
-                      onClick={closeMenu}
-                      className={[
-                        'flex items-center justify-between',
-                        'w-full py-5',
-                        'border-border border-b',
-                        'text-display-sm text-parchment font-serif',
-                        'hover:text-parchment-2',
-                        'ease-luxury transition-colors duration-300',
-                        'group',
-                      ].join(' ')}
+                      onClick={() => setMenuOpen(false)}
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        paddingTop: '1.25rem',
+                        paddingBottom: '1.25rem',
+                        borderBottom: '0.5px solid #E8E4DE',
+                        fontFamily: 'var(--font-bodoni), Georgia, serif',
+                        fontSize: '1.75rem',
+                        fontWeight: 400,
+                        color: '#0D0C0A',
+                        textDecoration: 'none',
+                      }}
                     >
-                      <span>{link.label}</span>
-                      {/* Subtle arrow — appears on hover */}
-                      <span
-                        className={[
-                          'text-label text-leather',
-                          'opacity-0 group-hover:opacity-100',
-                          'translate-x-[-4px] group-hover:translate-x-0',
-                          'ease-luxury transition-all duration-300',
-                        ].join(' ')}
-                      >
-                        →
-                      </span>
+                      {link.label}
                     </Link>
                   </motion.li>
                 ))}
-
-                {/* Cart link in mobile menu */}
-                <motion.li
-                  custom={NAV_LINKS.length}
-                  variants={menuItemVariants}
-                  initial="closed"
-                  animate="open"
-                  exit="closed"
-                >
-                  <Link
-                    href="/cart"
-                    onClick={closeMenu}
-                    className={[
-                      'flex items-center justify-between',
-                      'w-full py-5',
-                      'border-border border-b',
-                      'text-display-sm text-parchment font-serif',
-                      'hover:text-parchment-2',
-                      'ease-luxury transition-colors duration-300',
-                      'group',
-                    ].join(' ')}
-                  >
-                    <span>Cart</span>
-                    {cartCount > 0 && (
-                      <span className="text-label text-leather">
-                        {cartCount}
-                      </span>
-                    )}
-                  </Link>
-                </motion.li>
               </ul>
-
-              {/* Footer of mobile menu */}
-              <motion.div
-                custom={NAV_LINKS.length + 1}
-                variants={menuItemVariants}
-                initial="closed"
-                animate="open"
-                exit="closed"
-                className="border-border mt-auto border-t pt-8"
+              <p
+                style={{
+                  fontFamily: 'var(--font-inter), system-ui, sans-serif',
+                  fontSize: '0.625rem',
+                  fontWeight: 500,
+                  letterSpacing: '0.25em',
+                  textTransform: 'uppercase',
+                  color: '#9A8878',
+                  marginTop: 'auto',
+                  paddingTop: '2rem',
+                  borderTop: '0.5px solid #E8E4DE',
+                }}
               >
-                <p className="text-label text-parchment-4 text-[0.625rem] tracking-[0.25em]">
-                  Worn in. Never out.
-                </p>
-                <p className="text-label text-parchment-4 mt-2 text-[0.625rem] tracking-[0.25em] opacity-50">
-                  Calgary · Est. 2025
-                </p>
-              </motion.div>
+                Worn in. Never out.
+              </p>
             </motion.div>
           </>
         )}

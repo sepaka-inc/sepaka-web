@@ -70,8 +70,8 @@ export const metadata: Metadata = {
 }
 
 export const viewport: Viewport = {
-  themeColor: '#0D0C0A',
-  colorScheme: 'dark',
+  themeColor: '#FFFFFF',
+  colorScheme: 'light',
   width: 'device-width',
   initialScale: 1,
 }
@@ -85,10 +85,10 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${bodoni.variable} ${inter.variable} dark`}
+      className={`${bodoni.variable} ${inter.variable}`}
       suppressHydrationWarning
     >
-      <body className="bg-void text-parchment selection:bg-leather selection:text-parchment font-sans antialiased">
+      <body className="bg-white text-void font-sans antialiased selection:bg-leather selection:text-white">
         <Navbar />
         <main>{children}</main>
         <Analytics />
