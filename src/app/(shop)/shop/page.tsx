@@ -11,17 +11,27 @@ type Filter = 'all' | 'lamb' | 'camel'
 function ProductCard({ product }: { product: Product }) {
   const [activeVariant, setActiveVariant] = useState<ColorVariant>(product.variants[0])
   const [isHovered, setIsHovered] = useState(false)
+  const [variantChosen, setVariantChosen] = useState(false)
   const [isBookmarked, setIsBookmarked] = useState(false)
 
-  const currentImage = isHovered
+  // Only swap to model image if no swatch has been manually chosen
+  const currentImage = (!variantChosen && isHovered)
     ? activeVariant.modelImage
     : activeVariant.productImage
+
+  const handleVariantClick = (variant: ColorVariant) => {
+    setActiveVariant(variant)
+    setVariantChosen(true)
+  }
+
+  // Build href with color param so product page opens on correct colorway
+  const productHref = `/products/${product.slug}?color=${encodeURIComponent(activeVariant.name)}`
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
       {/* Image card */}
       <Link
-        href={`/products/${product.slug}`}
+        href={productHref}
         style={{ textDecoration: 'none', display: 'block' }}
       >
         <div
@@ -53,9 +63,9 @@ function ProductCard({ product }: { product: Product }) {
           <div style={{
             position:        'absolute',
             inset:           0,
-            backgroundColor: 'rgba(13,12,10,0)',
+            backgroundColor: isHovered ? 'rgba(13,12,10,0.08)' : 'rgba(13,12,10,0)',
             transition:      'background-color 600ms cubic-bezier(0.25, 0.1, 0.25, 1)',
-            ...(isHovered && { backgroundColor: 'rgba(13,12,10,0.08)' }),
+            pointerEvents:   'none',
           }} />
 
           {/* Bookmark icon */}
@@ -92,30 +102,36 @@ function ProductCard({ product }: { product: Product }) {
             </svg>
           </button>
 
-          {/* Hover CTA */}
+          {/* Hover CTA — only show when hovered */}
           <div style={{
-            position:        'absolute',
-            bottom:          '1.25rem',
-            left:            '1.25rem',
-            opacity:         isHovered ? 1 : 0,
-            transform:       isHovered ? 'translateY(0)' : 'translateY(6px)',
-            transition:      'opacity 400ms ease, transform 400ms ease',
-            zIndex:          2,
+            position:   'absolute',
+            bottom:     '1.25rem',
+            left:       '1.25rem',
+            opacity:    isHovered ? 1 : 0,
+            transform:  isHovered ? 'translateY(0)' : 'translateY(6px)',
+            transition: 'opacity 400ms ease, transform 400ms ease',
+            zIndex:     2,
           }}>
             <span style={{
-              display:         'inline-flex',
-              alignItems:      'center',
-              gap:             '0.5rem',
-              fontFamily:      'var(--font-inter), system-ui, sans-serif',
-              fontSize:        '0.625rem',
-              fontWeight:      500,
-              letterSpacing:   '0.15em',
-              textTransform:   'uppercase',
-              color:           '#F5F2EC',
+              display:       'inline-flex',
+              alignItems:    'center',
+              gap:           '0.5rem',
+              fontFamily:    'var(--font-inter), system-ui, sans-serif',
+              fontSize:      '0.625rem',
+              fontWeight:    500,
+              letterSpacing: '0.15em',
+              textTransform: 'uppercase',
+              color:         '#F5F2EC',
             }}>
               View Jacket
               <svg width="16" height="8" viewBox="0 0 20 8" fill="none" aria-hidden="true">
-                <path d="M0 4H18M15 1L18.5 4L15 7" stroke="currentColor" strokeWidth="0.75" strokeLinecap="round" strokeLinejoin="round" />
+                <path
+                  d="M0 4H18M15 1L18.5 4L15 7"
+                  stroke="currentColor"
+                  strokeWidth="0.75"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
               </svg>
             </span>
           </div>
@@ -171,7 +187,7 @@ function ProductCard({ product }: { product: Product }) {
             {product.variants.map((variant) => (
               <button
                 key={variant.name}
-                onClick={() => setActiveVariant(variant)}
+                onClick={() => handleVariantClick(variant)}
                 title={variant.name}
                 style={{
                   width:           '16px',
@@ -245,11 +261,11 @@ export default function ShopPage() {
           gap:            '2rem',
         }}>
           <h1 style={{
-            fontFamily:    'var(--font-bodoni), Georgia, serif',
+            fontFamily:    'var(--font-inter), system-ui, sans-serif',
             fontSize:      'clamp(2.5rem, 5vw, 4rem)',
-            fontWeight:    400,
+            fontWeight:    300,
             color:         '#0D0C0A',
-            letterSpacing: '-0.02em',
+            letterSpacing: '-0.03em',
             lineHeight:    1.0,
             margin:        0,
           }}>

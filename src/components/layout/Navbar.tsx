@@ -1,416 +1,161 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import Link from 'next/link'
-import { ShoppingBag, Search, User } from 'lucide-react'
-import { motion, AnimatePresence } from 'framer-motion'
-
-const NAV_LINKS = [
-  { label: 'Shop', href: '/shop' },
-  { label: 'The Story', href: '/story' },
-  { label: 'Journal', href: '/journal' },
-  { label: 'About', href: '/about' },
-] as const
-
-const EASE_CINEMATIC = [0.76, 0, 0.24, 1] as const
-const EASE_LUXURY = [0.25, 0.1, 0.25, 1] as const
-
-const menuVariants = {
-  closed: {
-    x: '100%',
-    transition: { duration: 0.6, ease: EASE_CINEMATIC },
-  },
-  open: {
-    x: '0%',
-    transition: { duration: 0.6, ease: EASE_CINEMATIC },
-  },
-}
-
-const itemVariants = {
-  closed: { opacity: 0, y: 20 },
-  open: (i: number) => ({
-    opacity: 1,
-    y: 0,
-    transition: {
-      delay: 0.15 + i * 0.07,
-      duration: 0.5,
-      ease: EASE_LUXURY,
-    },
-  }),
-}
+import Image from 'next/image'
+import { usePathname } from 'next/navigation'
 
 export default function Navbar() {
-  const [menuOpen, setMenuOpen] = useState(false)
-  const [cartCount] = useState(0)
+  const pathname = usePathname()
+  const isHomepage = pathname === '/'
+
+  const [visible, setVisible] = useState(true)
+  const lastScrollY = useRef(0)
+  const ticking = useRef(false)
 
   useEffect(() => {
-    document.body.style.overflow = menuOpen ? 'hidden' : ''
-    return () => {
-      document.body.style.overflow = ''
+    // On homepage — always visible, no scroll logic needed
+    if (isHomepage) {
+      setVisible(true)
+      return
     }
-  }, [menuOpen])
 
-  useEffect(() => {
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') setMenuOpen(false)
+    const handleScroll = () => {
+      if (!ticking.current) {
+        window.requestAnimationFrame(() => {
+          const currentScrollY = window.scrollY
+          const scrollingDown = currentScrollY > lastScrollY.current
+
+          // Only hide after scrolled past 80px to avoid flickering at top
+          if (currentScrollY < 80) {
+            setVisible(true)
+          } else if (scrollingDown) {
+            setVisible(false)
+          } else {
+            setVisible(true)
+          }
+
+          lastScrollY.current = currentScrollY
+          ticking.current = false
+        })
+        ticking.current = true
+      }
     }
-    window.addEventListener('keydown', onKey)
-    return () => window.removeEventListener('keydown', onKey)
-  }, [])
 
-  const LINK_COLOR = '#000000'
-  const LINK_COLOR_MUTED = '#0D0C0A'
+    window.addEventListener('scroll', handleScroll, { passive: true })
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [isHomepage])
 
   return (
-    <>
-      <header
-        role="banner"
+    <header
+      style={{
+        position:        'fixed',
+        top:             0,
+        left:            0,
+        right:           0,
+        zIndex:          50,
+        backgroundColor: '#FFFFFF',
+        borderBottom:    '0.5px solid #E8E4DE',
+        transform:       visible ? 'translateY(0)' : 'translateY(-100%)',
+        transition:      isHomepage
+          ? 'none'
+          : 'transform 400ms cubic-bezier(0.25, 0.1, 0.25, 1)',
+      }}
+    >
+      <nav
         style={{
-          position: 'fixed',
-          top: 0,
-          left: 0,
-          right: 0,
-          zIndex: 50,
-          backgroundColor: '#FFFFFF',
-          borderBottom: '0.5px solid #E8E4DE',
+          display:        'flex',
+          alignItems:     'center',
+          justifyContent: 'space-between',
+          padding:        '0 clamp(1.5rem, 4vw, 4rem)',
+          height:         '60px',
         }}
       >
-        <div
-          style={{
-            paddingLeft: '32px',
-            paddingRight: '32px',
-            height: '64px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            position: 'relative',
-          }}
-        >
-          <Link
-            href="/"
-            aria-label="SEPAKA homepage"
-            style={{ textDecoration: 'none', flexShrink: 0, zIndex: 1 }}
-          >
-            <img
-              src="/images/brand/sepaka-logo.svg"
-              alt="SEPAKA"
-              style={{
-                height: '36px',
-                width: 'auto',
-                display: 'block',
-                filter: 'brightness(0)',
-              }}
-            />
-          </Link>
+        {/* Logo — left */}
+        <Link href="/" style={{ display: 'flex', alignItems: 'center', flexShrink: 0 }}>
+          <Image
+            src="/images/brand/sepaka-logo.svg"
+            alt="SEPAKA"
+            width={100}
+            height={28}
+            priority
+          />
+        </Link>
 
-          <nav
-            role="navigation"
-            aria-label="Main navigation"
-            style={{
-              position: 'absolute',
-              left: '50%',
-              top: '50%',
-              transform: 'translate(-50%, -50%)',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '2.75rem',
-            }}
-            className="desktop-nav"
-          >
-            {NAV_LINKS.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                style={{
-                  fontFamily: 'var(--font-inter), system-ui, sans-serif',
-                  fontSize: '0.8125rem',
-                  fontWeight: 400,
-                  letterSpacing: '0.04em',
-                  textDecoration: 'none',
-                  color: LINK_COLOR_MUTED,
-                  transition: 'color 250ms',
-                  whiteSpace: 'nowrap',
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.color = LINK_COLOR
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.color = LINK_COLOR_MUTED
-                }}
-              >
-                {link.label}
-              </Link>
-            ))}
-          </nav>
-
-          <div
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '0.25rem',
-              flexShrink: 0,
-              zIndex: 1,
-            }}
-          >
-            <button
-              type="button"
-              aria-label="Search"
-              style={{
-                background: 'none',
-                border: 'none',
-                cursor: 'pointer',
-                padding: '8px',
-                color: LINK_COLOR_MUTED,
-                display: 'flex',
-                alignItems: 'center',
-                transition: 'color 250ms',
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.color = LINK_COLOR
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.color = LINK_COLOR_MUTED
-              }}
-            >
-              <Search size={22} strokeWidth={1.25} aria-hidden="true" />
-            </button>
-
-            <button
-              type="button"
-              aria-label="My account"
-              style={{
-                background: 'none',
-                border: 'none',
-                cursor: 'pointer',
-                padding: '8px',
-                color: LINK_COLOR_MUTED,
-                display: 'flex',
-                alignItems: 'center',
-                transition: 'color 250ms',
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.color = LINK_COLOR
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.color = LINK_COLOR_MUTED
-              }}
-            >
-              <User size={22} strokeWidth={1.25} aria-hidden="true" />
-            </button>
-
+        {/* Nav links — centre */}
+        <div style={{
+          position:  'absolute',
+          left:      '50%',
+          transform: 'translateX(-50%)',
+          display:   'flex',
+          gap:       'clamp(1.5rem, 3vw, 3rem)',
+        }}>
+          {[
+            { label: 'Shop',      href: '/shop'      },
+            { label: 'The Story', href: '#'          },
+          ].map(({ label, href }) => (
             <Link
-              href="/cart"
-              aria-label={
-                cartCount > 0 ? `Cart — ${cartCount} items` : 'Cart'
-              }
+              key={label}
+              href={href}
               style={{
-                position: 'relative',
-                padding: '8px',
-                color: LINK_COLOR_MUTED,
-                display: 'flex',
-                alignItems: 'center',
+                fontFamily:     'var(--font-inter), system-ui, sans-serif',
+                fontSize:       '0.75rem',
+                fontWeight:     400,
+                letterSpacing:  '0.06em',
+                color:          '#0D0C0A',
                 textDecoration: 'none',
-                transition: 'color 250ms',
+                opacity:        0.75,
+                transition:     'opacity 200ms ease',
               }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.color = LINK_COLOR
+              onMouseEnter={e => {
+                (e.currentTarget as HTMLAnchorElement).style.opacity = '1'
               }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.color = LINK_COLOR_MUTED
+              onMouseLeave={e => {
+                (e.currentTarget as HTMLAnchorElement).style.opacity = '0.75'
               }}
             >
-              <ShoppingBag size={22} strokeWidth={1.25} aria-hidden="true" />
-              {cartCount > 0 && (
-                <span
-                  style={{
-                    position: 'absolute',
-                    top: '4px',
-                    right: '4px',
-                    width: '16px',
-                    height: '16px',
-                    borderRadius: '50%',
-                    backgroundColor: '#8B5E3C',
-                    color: '#fff',
-                    fontSize: '9px',
-                    fontWeight: 600,
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                  }}
-                >
-                  {cartCount}
-                </span>
-              )}
+              {label}
             </Link>
-
-            <button
-              type="button"
-              className="mobile-menu-btn"
-              aria-label={menuOpen ? 'Close menu' : 'Open menu'}
-              aria-expanded={menuOpen}
-              onClick={() => setMenuOpen((v) => !v)}
-              style={{
-                background: 'none',
-                border: 'none',
-                cursor: 'pointer',
-                padding: '8px',
-                color: LINK_COLOR_MUTED,
-                display: 'flex',
-                alignItems: 'center',
-              }}
-            >
-              <svg
-                width="22"
-                height="22"
-                viewBox="0 0 22 22"
-                fill="none"
-                aria-hidden="true"
-              >
-                <line
-                  x1="3"
-                  y1="6"
-                  x2="19"
-                  y2="6"
-                  stroke="currentColor"
-                  strokeWidth="1.25"
-                  strokeLinecap="round"
-                />
-                <line
-                  x1="3"
-                  y1="11"
-                  x2="19"
-                  y2="11"
-                  stroke="currentColor"
-                  strokeWidth="1.25"
-                  strokeLinecap="round"
-                />
-                <line
-                  x1="3"
-                  y1="16"
-                  x2="19"
-                  y2="16"
-                  stroke="currentColor"
-                  strokeWidth="1.25"
-                  strokeLinecap="round"
-                />
-              </svg>
-            </button>
-          </div>
+          ))}
         </div>
 
-        <style>{`
-          .desktop-nav { display: flex !important; }
-          .mobile-menu-btn { display: none !important; }
-          @media (max-width: 767px) {
-            .desktop-nav { display: none !important; }
-            .mobile-menu-btn { display: flex !important; }
-          }
-        `}</style>
-      </header>
+        {/* Icons — right */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '1.25rem', flexShrink: 0 }}>
+          {/* Search */}
+          <button
+            aria-label="Search"
+            style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '0.25rem', color: '#0D0C0A', opacity: 0.7 }}
+          >
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round">
+              <circle cx="11" cy="11" r="8" />
+              <path d="M21 21l-4.35-4.35" />
+            </svg>
+          </button>
 
-      <AnimatePresence>
-        {menuOpen && (
-          <>
-            <motion.div
-              key="backdrop"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.3 }}
-              onClick={() => setMenuOpen(false)}
-              aria-hidden="true"
-              style={{
-                position: 'fixed',
-                inset: 0,
-                zIndex: 40,
-                backgroundColor: 'rgba(13,12,10,0.15)',
-              }}
-            />
-            <motion.div
-              key="panel"
-              variants={menuVariants}
-              initial="closed"
-              animate="open"
-              exit="closed"
-              role="dialog"
-              aria-modal="true"
-              aria-label="Navigation menu"
-              style={{
-                position: 'fixed',
-                top: 0,
-                right: 0,
-                bottom: 0,
-                zIndex: 60,
-                width: '100%',
-                maxWidth: '360px',
-                backgroundColor: '#FFFFFF',
-                borderLeft: '0.5px solid #E8E4DE',
-                display: 'flex',
-                flexDirection: 'column',
-                paddingTop: '5rem',
-                paddingBottom: '2.5rem',
-                paddingLeft: '2rem',
-                paddingRight: '2rem',
-              }}
-            >
-              <ul
-                style={{
-                  listStyle: 'none',
-                  margin: 0,
-                  padding: 0,
-                  flex: 1,
-                }}
-              >
-                {NAV_LINKS.map((link, i) => (
-                  <motion.li
-                    key={link.href}
-                    custom={i}
-                    variants={itemVariants}
-                    initial="closed"
-                    animate="open"
-                    exit="closed"
-                  >
-                    <Link
-                      href={link.href}
-                      onClick={() => setMenuOpen(false)}
-                      style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'space-between',
-                        paddingTop: '1.25rem',
-                        paddingBottom: '1.25rem',
-                        borderBottom: '0.5px solid #E8E4DE',
-                        fontFamily: 'var(--font-bodoni), Georgia, serif',
-                        fontSize: '1.75rem',
-                        fontWeight: 400,
-                        color: '#0D0C0A',
-                        textDecoration: 'none',
-                      }}
-                    >
-                      {link.label}
-                    </Link>
-                  </motion.li>
-                ))}
-              </ul>
-              <p
-                style={{
-                  fontFamily: 'var(--font-inter), system-ui, sans-serif',
-                  fontSize: '0.625rem',
-                  fontWeight: 500,
-                  letterSpacing: '0.25em',
-                  textTransform: 'uppercase',
-                  color: '#9A8878',
-                  marginTop: 'auto',
-                  paddingTop: '2rem',
-                  borderTop: '0.5px solid #E8E4DE',
-                }}
-              >
-                Worn in. Never out.
-              </p>
-            </motion.div>
-          </>
-        )}
-      </AnimatePresence>
-    </>
+          {/* Account */}
+          <button
+            aria-label="Account"
+            style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '0.25rem', color: '#0D0C0A', opacity: 0.7 }}
+          >
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+              <circle cx="12" cy="7" r="4" />
+            </svg>
+          </button>
+
+          {/* Cart */}
+          <button
+            aria-label="Cart"
+            style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '0.25rem', color: '#0D0C0A', opacity: 0.7 }}
+          >
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z" />
+              <line x1="3" y1="6" x2="21" y2="6" />
+              <path d="M16 10a4 4 0 0 1-8 0" />
+            </svg>
+          </button>
+        </div>
+      </nav>
+    </header>
   )
 }
