@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import { useEffect, useState } from 'react'
 
 const columns = [
   {
@@ -41,6 +42,15 @@ const columns = [
 ]
 
 export default function Footer() {
+  const [isDesktop, setIsDesktop] = useState(true)
+
+  useEffect(() => {
+    const check = () => setIsDesktop(window.innerWidth >= 1024)
+    check()
+    window.addEventListener('resize', check)
+    return () => window.removeEventListener('resize', check)
+  }, [])
+
   return (
     <footer
       style={{
@@ -53,15 +63,14 @@ export default function Footer() {
       <div
         style={{
           display: 'grid',
-          gridTemplateColumns: 'repeat(4, 1fr)',
+          gridTemplateColumns: isDesktop ? 'repeat(4, 1fr)' : 'repeat(2, 1fr)',
           gap: 'clamp(2rem, 4vw, 4rem)',
-          padding: 'clamp(4rem, 8vw, 7rem) clamp(2rem, 6vw, 7rem)',
+          padding: 'clamp(3rem, 8vw, 7rem) clamp(1.5rem, 6vw, 7rem)',
           borderBottom: '0.5px solid rgba(245,242,236,0.12)',
         }}
       >
         {columns.map((col) => (
           <div key={col.heading}>
-            {/* Column heading */}
             <p
               style={{
                 fontFamily: 'var(--font-inter), system-ui, sans-serif',
@@ -76,7 +85,6 @@ export default function Footer() {
               {col.heading}
             </p>
 
-            {/* Links */}
             <ul style={{ listStyle: 'none', margin: 0, padding: 0 }}>
               {col.links.map((link) => (
                 <li key={link.label} style={{ marginBottom: '1rem' }}>
@@ -92,10 +100,12 @@ export default function Footer() {
                       transition: 'color 300ms ease',
                     }}
                     onMouseEnter={(e) => {
-                      e.currentTarget.style.color = '#F5F2EC'
+                      ;(e.currentTarget as HTMLAnchorElement).style.color =
+                        '#F5F2EC'
                     }}
                     onMouseLeave={(e) => {
-                      e.currentTarget.style.color = 'rgba(245,242,236,0.8)'
+                      ;(e.currentTarget as HTMLAnchorElement).style.color =
+                        'rgba(245,242,236,0.8)'
                     }}
                   >
                     {link.label}
@@ -111,9 +121,12 @@ export default function Footer() {
       <div
         style={{
           display: 'flex',
+          flexWrap: 'wrap',
           alignItems: 'center',
-          justifyContent: 'space-between',
-          padding: 'clamp(1.5rem, 3vw, 2.5rem) clamp(2rem, 6vw, 7rem)',
+          justifyContent: isDesktop ? 'space-between' : 'center',
+          gap: '1.25rem',
+          padding: 'clamp(1.5rem, 3vw, 2.5rem) clamp(1.5rem, 6vw, 7rem)',
+          textAlign: isDesktop ? 'left' : 'center',
         }}
       >
         {/* Copyright */}
@@ -125,6 +138,7 @@ export default function Footer() {
             letterSpacing: '0.08em',
             color: 'rgba(245,242,236,0.5)',
             textTransform: 'uppercase',
+            margin: 0,
           }}
         >
           © 2026 SEPAKA. Calgary, Alberta.
@@ -137,8 +151,9 @@ export default function Footer() {
             fontSize: '0.9375rem',
             fontWeight: 400,
             fontStyle: 'italic',
-            color: 'rgba(245,242,236,0.45)',
+            color: 'rgba(245,242,236,0.5)',
             letterSpacing: '0.02em',
+            margin: 0,
           }}
         >
           Worn in. Never out.
@@ -163,10 +178,11 @@ export default function Footer() {
             transition: 'color 300ms ease',
           }}
           onMouseEnter={(e) => {
-            e.currentTarget.style.color = '#F5F2EC'
+            ;(e.currentTarget as HTMLAnchorElement).style.color = '#F5F2EC'
           }}
           onMouseLeave={(e) => {
-            e.currentTarget.style.color = 'rgba(245,242,236,0.5)'
+            ;(e.currentTarget as HTMLAnchorElement).style.color =
+              'rgba(245,242,236,0.5)'
           }}
         >
           <svg
@@ -182,7 +198,13 @@ export default function Footer() {
           >
             <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
             <circle cx="12" cy="12" r="4" />
-            <circle cx="17.5" cy="6.5" r="0.75" fill="currentColor" stroke="none" />
+            <circle
+              cx="17.5"
+              cy="6.5"
+              r="0.75"
+              fill="currentColor"
+              stroke="none"
+            />
           </svg>
           @sepaka.ca
         </Link>
