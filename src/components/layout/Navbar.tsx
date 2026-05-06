@@ -58,8 +58,8 @@ export default function Navbar() {
     return () => window.removeEventListener('keydown', onKey)
   }, [])
 
-  const LINK_COLOR = '#0D0C0A'
-  const LINK_COLOR_MUTED = '#2A2825'
+  const LINK_COLOR = '#000000'
+  const LINK_COLOR_MUTED = '#0D0C0A'
 
   return (
     <>
@@ -77,10 +77,8 @@ export default function Navbar() {
       >
         <div
           style={{
-            maxWidth: '1440px',
-            margin: '0 auto',
-            paddingLeft: '2rem',
-            paddingRight: '2rem',
+            paddingLeft: '32px',
+            paddingRight: '32px',
             height: '64px',
             display: 'flex',
             alignItems: 'center',
@@ -97,7 +95,7 @@ export default function Navbar() {
               src="/images/brand/sepaka-logo.svg"
               alt="SEPAKA"
               style={{
-                height: '28px',
+                height: '36px',
                 width: 'auto',
                 display: 'block',
                 filter: 'brightness(0)',
@@ -125,7 +123,7 @@ export default function Navbar() {
                 href={link.href}
                 style={{
                   fontFamily: 'var(--font-inter), system-ui, sans-serif',
-                  fontSize: '0.75rem',
+                  fontSize: '0.8125rem',
                   fontWeight: 400,
                   letterSpacing: '0.04em',
                   textDecoration: 'none',
@@ -174,7 +172,7 @@ export default function Navbar() {
                 e.currentTarget.style.color = LINK_COLOR_MUTED
               }}
             >
-              <Search size={20} strokeWidth={1.25} aria-hidden="true" />
+              <Search size={22} strokeWidth={1.25} aria-hidden="true" />
             </button>
 
             <button
@@ -197,7 +195,7 @@ export default function Navbar() {
                 e.currentTarget.style.color = LINK_COLOR_MUTED
               }}
             >
-              <User size={20} strokeWidth={1.25} aria-hidden="true" />
+              <User size={22} strokeWidth={1.25} aria-hidden="true" />
             </button>
 
             <Link
@@ -221,7 +219,7 @@ export default function Navbar() {
                 e.currentTarget.style.color = LINK_COLOR_MUTED
               }}
             >
-              <ShoppingBag size={20} strokeWidth={1.25} aria-hidden="true" />
+              <ShoppingBag size={22} strokeWidth={1.25} aria-hidden="true" />
               {cartCount > 0 && (
                 <span
                   style={{
