@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from 'next'
 import { Bodoni_Moda, Inter } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/next'
 import Navbar from '@/components/layout/Navbar'
+import Footer from '@/components/layout/Footer'
 import './globals.css'
 
 // ── Bodoni Moda — display typeface ───────────────────────
@@ -91,6 +92,7 @@ export default function RootLayout({
       <body className="bg-white text-void font-sans antialiased selection:bg-leather selection:text-white">
         <Navbar />
         <main>{children}</main>
+        <Footer />
         <Analytics />
       </body>
     </html>
