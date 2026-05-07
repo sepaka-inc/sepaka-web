@@ -304,17 +304,37 @@ export default function ShopPage() {
       <div style={{
         padding: 'clamp(3rem, 5vw, 5rem) clamp(2rem, 6vw, 7rem)',
       }}>
+        {/* First 4 jackets — 2 column grid */}
         <div style={{
           display:             'grid',
           gridTemplateColumns: 'repeat(2, 1fr)',
           gap:                 'clamp(2rem, 4vw, 4rem) clamp(1.5rem, 3vw, 3rem)',
+          marginBottom:        'clamp(2rem, 4vw, 4rem)',
         }}>
-          {filtered.map((product) => (
-            <ProductCard key={product.id} product={product} />
-          ))}
+          {filtered
+            .filter((p) => p.leather === 'lamb')
+            .map((product) => (
+              <ProductCard key={product.id} product={product} />
+            ))}
         </div>
 
-        {/* Empty state if filter returns nothing */}
+        {/* The Sentinel — centered solo */}
+        {filtered.some((p) => p.leather === 'camel') && (
+          <div style={{
+            display:        'flex',
+            justifyContent: 'center',
+          }}>
+            <div style={{ width: '50%', minWidth: '280px' }}>
+              {filtered
+                .filter((p) => p.leather === 'camel')
+                .map((product) => (
+                  <ProductCard key={product.id} product={product} />
+                ))}
+            </div>
+          </div>
+        )}
+
+        {/* Empty state */}
         {filtered.length === 0 && (
           <div style={{
             textAlign:  'center',
