@@ -8,6 +8,15 @@
     },
     "supabase": {
       "enabled": true
+    },
+    "stripe": {
+      "enabled": true
+    },
+    "resend": {
+      "enabled": true
+    },
+    "posthog": {
+      "enabled": true
     }
   }
 }

@@ -1,7 +1,29 @@
+
 {
+
   "mcpServers": {
+
     "supabase": {
+
       "url": "https://mcp.supabase.com/mcp?project_ref=eynuxwaskzcjtohkemrl"
+
+    },
+
+    "resend": {
+
+      "command": "/Users/manu/.nvm/versions/node/v20.20.2/bin/npx",
+
+      "args": ["-y", "resend-mcp"],
+
+      "env": {
+
+        "RESEND_API_KEY": "re_DU3htxvj_ECJFeDXnFGfwbpMovtRaeTTG"
+
+      }
+
     }
+
   }
+
 }
+
