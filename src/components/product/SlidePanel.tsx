@@ -36,8 +36,10 @@ function NestedAccordion({ label, children }: { label: string; children: ReactNo
           borderBottom:    open ? 'none' : '0.5px solid #E8E4DE',
           cursor:          'pointer',
           fontFamily:      'var(--font-inter), system-ui, sans-serif',
-          fontSize:        '0.75rem',
-          letterSpacing:   '0.04em',
+          fontSize:        '0.625rem',
+          fontWeight:      500,
+          letterSpacing:   '0.14em',
+          textTransform:   'uppercase',
           color:           'rgba(13,12,10,0.65)',
           textAlign:       'left',
         }}

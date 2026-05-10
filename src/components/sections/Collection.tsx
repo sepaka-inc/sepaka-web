@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState, type CSSProperties } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 
 const EASE_LUXURY = 'cubic-bezier(0.25, 0.1, 0.25, 1)'
 
@@ -105,6 +106,8 @@ function JacketPanel({ jacket, index }: { jacket: Jacket; index: number }) {
     return () => window.removeEventListener('resize', check)
   }, [])
 
+  const router = useRouter()
+
   const fadeStyle = (delay: number): CSSProperties => ({
     opacity: inView ? 1 : 0,
     transform: inView ? 'translateY(0)' : 'translateY(32px)',
@@ -112,12 +115,36 @@ function JacketPanel({ jacket, index }: { jacket: Jacket; index: number }) {
   })
 
   const imageMap: Record<string, string> = {
-    'the-frontier': '/images/products/frontier.jpg',
-    'the-warden': '/images/products/warden.jpg',
-    'the-nomad': '/images/products/nomad.jpg',
-    'the-heir': '/images/products/heir.jpg',
-    'the-sentinel': '/images/products/sentinel.jpg',
+    'the-frontier': '/images/products/frontier-black.jpg',
+    'the-warden':   '/images/products/warden-black.jpg',
+    'the-nomad':    '/images/products/nomad-black.jpg',
+    'the-heir':     '/images/products/heir-black.jpg',
+    'the-sentinel': '/images/products/sentinel-brown.jpg',
   }
+
+  const ModelPlaceholder = (
+    <div
+      onClick={() => router.push(`/products/${jacket.slug}`)}
+      style={{
+        width:           isMobile ? '100%' : '60%',
+        height:          isMobile ? '55vw' : '100vh',
+        minHeight:       isMobile ? '260px' : undefined,
+        flexShrink:      0,
+        position:        'relative',
+        overflow:        'hidden',
+        cursor:          'pointer',
+      }}
+    >
+      <Image
+        src={imageMap[jacket.slug]}
+        alt={`${jacket.name} — SEPAKA`}
+        fill
+        sizes="(max-width: 768px) 100vw, 60vw"
+        className="object-cover object-center"
+        priority={index === 0}
+      />
+    </div>
+  )
 
   return (
     <div
@@ -131,25 +158,7 @@ function JacketPanel({ jacket, index }: { jacket: Jacket; index: number }) {
       }}
     >
       {/* Image */}
-      <div
-        style={{
-          width: isMobile ? '100%' : '60%',
-          height: isMobile ? '55vw' : '100vh',
-          minHeight: isMobile ? '260px' : undefined,
-          flexShrink: 0,
-          position: 'relative',
-          overflow: 'hidden',
-        }}
-      >
-        <Image
-          src={imageMap[jacket.slug]}
-          alt={`${jacket.name} — SEPAKA`}
-          fill
-          sizes="(max-width: 768px) 100vw, 60vw"
-          className="object-cover object-center"
-          priority={index === 0}
-        />
-      </div>
+      {ModelPlaceholder}
 
       {/* Info */}
       <div
