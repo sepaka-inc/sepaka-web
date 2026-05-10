@@ -13,6 +13,7 @@ interface Props {
   isMobile: boolean
   onVariantChange: (variant: ColorVariant) => void
   onOpenPanel: (panel: 'details' | 'delivery') => void
+  onAddToCart: (size: string) => void
 }
 
 export default function ProductInfo({
@@ -21,6 +22,7 @@ export default function ProductInfo({
   isMobile,
   onVariantChange,
   onOpenPanel,
+  onAddToCart,
 }: Props) {
   const [selectedSize, setSelectedSize] = useState<string | null>(null)
   const [sizeError, setSizeError] = useState(false)
@@ -31,7 +33,7 @@ export default function ProductInfo({
       return
     }
     setSizeError(false)
-    console.log({ product: product.name, variant: activeVariant.name, size: selectedSize })
+    onAddToCart(selectedSize)
   }
 
   return (

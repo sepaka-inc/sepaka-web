@@ -2,6 +2,9 @@
 
 import { useState, useEffect } from 'react'
 import { Product, ColorVariant } from '@/types/product'
+import { useCart } from '@/context/CartContext'
+import CartNotification from '@/components/cart/CartNotification'
+import { CartItem } from '@/types/cart'
 import ProductGallery from './ProductGallery'
 import ProductInfo from './ProductInfo'
 import Lightbox from './Lightbox'
@@ -14,6 +17,9 @@ interface Props {
 }
 
 export default function ProductDetailClient({ product, initialVariant }: Props) {
+  const { addItem } = useCart()
+  const [notificationItem, setNotificationItem] = useState<CartItem | null>(null)
+  const [notificationOpen, setNotificationOpen] = useState(false)
   const [activeVariant, setActiveVariant] = useState<ColorVariant>(initialVariant)
   const [lightboxOpen, setLightboxOpen] = useState(false)
   const [lightboxIndex, setLightboxIndex] = useState(0)
@@ -32,6 +38,22 @@ export default function ProductDetailClient({ product, initialVariant }: Props) 
   }, [])
 
   const images = getGalleryImages(product, activeVariant)
+
+  const handleAddToCart = (size: string) => {
+    const item: Omit<CartItem, 'id' | 'quantity'> = {
+      slug:        product.slug,
+      name:        product.name,
+      variantName: activeVariant.name,
+      variantHex:  activeVariant.hex,
+      size,
+      price:       parseInt(product.price.replace(/[^0-9]/g, '')),
+      image:       activeVariant.productImage,
+    }
+    addItem(item)
+    const fullItem: CartItem = { ...item, id: '', quantity: 1 }
+    setNotificationItem(fullItem)
+    setNotificationOpen(true)
+  }
 
   return (
     <main
@@ -63,6 +85,7 @@ export default function ProductDetailClient({ product, initialVariant }: Props) 
           isMobile={isMobile}
           onVariantChange={setActiveVariant}
           onOpenPanel={(panel) => setSlidePanel(panel)}
+          onAddToCart={handleAddToCart}
         />
       </div>
 
@@ -79,6 +102,12 @@ export default function ProductDetailClient({ product, initialVariant }: Props) 
         type={slidePanel}
         product={product}
         activeVariant={activeVariant}
+      />
+
+      <CartNotification
+        item={notificationItem}
+        isOpen={notificationOpen}
+        onClose={() => setNotificationOpen(false)}
       />
     </main>
   )

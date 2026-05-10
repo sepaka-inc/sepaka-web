@@ -4,6 +4,7 @@ import { useEffect, useState, useRef } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { usePathname } from 'next/navigation'
+import { useCart } from '@/context/CartContext'
 
 const NAV_LINKS = [
   { label: 'Shop', href: '/shop' },
@@ -12,6 +13,7 @@ const NAV_LINKS = [
 
 export default function Navbar() {
   const pathname = usePathname()
+  const { totalItems, openCart } = useCart()
   const isHomepage = pathname === '/'
 
   const [visible, setVisible] = useState(true)
@@ -216,14 +218,18 @@ export default function Navbar() {
             {/* Cart — always visible */}
             <button
               type="button"
-              aria-label="Cart"
+              onClick={openCart}
+              aria-label={`Open cart${totalItems > 0 ? `, ${totalItems} items` : ''}`}
               style={{
+                position:   'relative',
                 background: 'none',
-                border: 'none',
-                cursor: 'pointer',
-                padding: '0.25rem',
-                color: '#0D0C0A',
-                opacity: 0.7,
+                border:     'none',
+                cursor:     'pointer',
+                padding:    '0.25rem',
+                color:      totalItems > 0 ? '#0D0C0A' : 'rgba(13,12,10,0.7)',
+                display:    'flex',
+                alignItems: 'center',
+                transition: 'color 200ms ease',
               }}
             >
               <svg
@@ -232,7 +238,7 @@ export default function Navbar() {
                 viewBox="0 0 24 24"
                 fill="none"
                 stroke="currentColor"
-                strokeWidth="1.25"
+                strokeWidth={totalItems > 0 ? 1.75 : 1.25}
                 strokeLinecap="round"
                 strokeLinejoin="round"
               >
@@ -240,6 +246,26 @@ export default function Navbar() {
                 <line x1="3" y1="6" x2="21" y2="6" />
                 <path d="M16 10a4 4 0 0 1-8 0" />
               </svg>
+              {totalItems > 0 && (
+                <div style={{
+                  position:        'absolute',
+                  top:             '-6px',
+                  right:           '-6px',
+                  width:           '14px',
+                  height:          '14px',
+                  borderRadius:    '50%',
+                  backgroundColor: '#0D0C0A',
+                  display:         'flex',
+                  alignItems:      'center',
+                  justifyContent:  'center',
+                  fontFamily:      'var(--font-inter), system-ui, sans-serif',
+                  fontSize:        '0.4375rem',
+                  fontWeight:      500,
+                  color:           '#F5F2EC',
+                }}>
+                  {totalItems > 9 ? '9+' : totalItems}
+                </div>
+              )}
             </button>
 
             {/* Hamburger — mobile only */}
