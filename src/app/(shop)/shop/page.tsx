@@ -175,7 +175,7 @@ function ProductCard({ product }: { product: Product }) {
           fontWeight:    400,
           letterSpacing: '0.08em',
           textTransform: 'uppercase',
-          color:         'rgba(13,12,10,0.4)',
+          color:         'rgba(13,12,10,0.6)',
           marginBottom:  product.variants.length > 1 ? '0.875rem' : '0',
         }}>
           {product.leather === 'camel' ? 'Camel Leather' : 'Full-Grain Lamb'}
@@ -214,7 +214,7 @@ function ProductCard({ product }: { product: Product }) {
               fontSize:      '0.625rem',
               fontWeight:    400,
               letterSpacing: '0.06em',
-              color:         'rgba(13,12,10,0.4)',
+              color:         'rgba(13,12,10,0.6)',
               marginLeft:    '0.25rem',
             }}>
               {activeVariant.name}
@@ -248,7 +248,7 @@ export default function ShopPage() {
           fontWeight:    500,
           letterSpacing: '0.2em',
           textTransform: 'uppercase',
-          color:         'rgba(13,12,10,0.35)',
+          color:         'rgba(13,12,10,0.55)',
           marginBottom:  '1rem',
         }}>
           The Collection
@@ -288,7 +288,7 @@ export default function ShopPage() {
                   border:          '0.5px solid',
                   borderColor:     filter === f ? '#0D0C0A' : '#D4CFC8',
                   backgroundColor: filter === f ? '#0D0C0A' : 'transparent',
-                  color:           filter === f ? '#F5F2EC' : 'rgba(13,12,10,0.45)',
+                  color:           filter === f ? '#F5F2EC' : 'rgba(13,12,10,0.65)',
                   cursor:          'pointer',
                   transition:      'all 300ms cubic-bezier(0.25, 0.1, 0.25, 1)',
                 }}
@@ -342,7 +342,7 @@ export default function ShopPage() {
             fontFamily: 'var(--font-bodoni), Georgia, serif',
             fontSize:   '1.125rem',
             fontStyle:  'italic',
-            color:      'rgba(13,12,10,0.35)',
+            color:      'rgba(13,12,10,0.55)',
           }}>
             No jackets found.
           </div>
@@ -361,7 +361,7 @@ export default function ShopPage() {
           fontSize:      '0.6875rem',
           fontWeight:    400,
           letterSpacing: '0.06em',
-          color:         'rgba(13,12,10,0.4)',
+          color:         'rgba(13,12,10,0.6)',
           textAlign:     'center',
         }}>
           All SEPAKA jackets are made to order. Production time 4–6 weeks.

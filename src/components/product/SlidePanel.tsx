@@ -181,12 +181,12 @@ export default function SlidePanel({ isOpen, onClose, type, product, activeVaria
               border:      'none',
               cursor:      'pointer',
               fontSize:    '1.125rem',
-              color:       'rgba(13,12,10,0.45)',
+              color:       'rgba(13,12,10,0.65)',
               padding:     '0.25rem',
               transition:  `color 200ms ${EASE}`,
             }}
             onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.color = '#0D0C0A' }}
-            onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.color = 'rgba(13,12,10,0.45)' }}
+            onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.color = 'rgba(13,12,10,0.65)' }}
           >
             ✕
           </button>

@@ -91,7 +91,7 @@ export default function ProductInfo({
           fontSize:      'clamp(0.875rem, 1.5vw, 1.125rem)',
           fontWeight:    400,
           fontStyle:     'italic',
-          color:         'rgba(13,12,10,0.45)',
+          color:         'rgba(13,12,10,0.65)',
           marginBottom:  '1rem',
         }}
       >
@@ -105,7 +105,7 @@ export default function ProductInfo({
           fontSize:      '0.625rem',
           letterSpacing: '0.16em',
           textTransform: 'uppercase',
-          color:         'rgba(13,12,10,0.4)',
+          color:         'rgba(13,12,10,0.6)',
           marginBottom:  '1rem',
         }}
       >

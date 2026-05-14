@@ -46,7 +46,7 @@ function AccordionRow({
           transform:  open ? 'rotate(180deg)' : 'rotate(0deg)',
           transition: `transform 250ms ${EASE}`,
           display:    'inline-block',
-          color:      'rgba(13,12,10,0.35)',
+          color:      'rgba(13,12,10,0.55)',
         }}>
           ˅
         </span>
@@ -134,7 +134,7 @@ function RemoveConfirmation({
             border:     'none',
             cursor:     'pointer',
             fontSize:   '1.125rem',
-            color:      'rgba(13,12,10,0.4)',
+            color:      'rgba(13,12,10,0.6)',
             fontFamily: 'var(--font-inter), system-ui, sans-serif',
           }}
         >
@@ -298,7 +298,7 @@ export default function CartPage() {
           fontSize:    'clamp(1.25rem, 2vw, 1.75rem)',
           fontWeight:  400,
           fontStyle:   'italic',
-          color:       'rgba(13,12,10,0.35)',
+          color:       'rgba(13,12,10,0.55)',
           letterSpacing: '-0.01em',
         }}>
           Your cart is empty.
@@ -364,7 +364,7 @@ export default function CartPage() {
                 fontSize:      '0.5625rem',
                 letterSpacing: '0.2em',
                 textTransform: 'uppercase',
-                color:         'rgba(13,12,10,0.4)',
+                color:         'rgba(13,12,10,0.6)',
                 padding:       0,
                 textDecoration:'underline',
               }}
@@ -385,7 +385,7 @@ export default function CartPage() {
           <p style={{
             fontFamily:    'var(--font-inter), system-ui, sans-serif',
             fontSize:      '0.5625rem',
-            color:         'rgba(13,12,10,0.35)',
+            color:         'rgba(13,12,10,0.55)',
             letterSpacing: '0.08em',
             marginBottom:  '1rem',
           }}>
@@ -448,7 +448,7 @@ export default function CartPage() {
                   <p style={{
                     fontFamily:    'var(--font-inter), system-ui, sans-serif',
                     fontSize:      'clamp(0.75rem, 1.2vw, 0.9375rem)',
-                    color:         'rgba(13,12,10,0.45)',
+                    color:         'rgba(13,12,10,0.65)',
                     lineHeight:    1.7,
                     letterSpacing: '0.02em',
                     marginBottom:  '6px',
@@ -635,7 +635,7 @@ export default function CartPage() {
             fontSize:      '0.6875rem',
             letterSpacing: '0.2em',
             textTransform: 'uppercase',
-            color:         'rgba(13,12,10,0.4)',
+            color:         'rgba(13,12,10,0.6)',
             marginBottom:  '1.25rem',
           }}>
             Order Summary
@@ -754,7 +754,7 @@ export default function CartPage() {
               width:           '100%',
               padding:         '0.625rem',
               backgroundColor: 'transparent',
-              color:           'rgba(13,12,10,0.45)',
+              color:           'rgba(13,12,10,0.65)',
               fontFamily:      'var(--font-inter), system-ui, sans-serif',
               fontSize:        '0.75rem',
               fontWeight:      400,

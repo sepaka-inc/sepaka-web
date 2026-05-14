@@ -229,7 +229,7 @@ function JacketPanel({ jacket, index }: { jacket: Jacket; index: number }) {
               fontSize: '0.75rem',
               fontWeight: 400,
               letterSpacing: '0.08em',
-              color: 'rgba(13,12,10,0.45)',
+              color: 'rgba(13,12,10,0.65)',
               marginBottom: '2rem',
               textTransform: 'uppercase',
             }}

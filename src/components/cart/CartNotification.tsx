@@ -97,7 +97,7 @@ export default function CartNotification({ item, isOpen, onClose }: Props) {
             fontSize:      '0.5625rem',
             letterSpacing: '0.18em',
             textTransform: 'uppercase',
-            color:         'rgba(13,12,10,0.4)',
+            color:         'rgba(13,12,10,0.6)',
             marginBottom:  '0.375rem',
           }}>
             Your Cart
@@ -160,7 +160,7 @@ export default function CartNotification({ item, isOpen, onClose }: Props) {
               <p style={{
                 fontFamily:    'var(--font-inter), system-ui, sans-serif',
                 fontSize:      '0.5625rem',
-                color:         'rgba(13,12,10,0.45)',
+                color:         'rgba(13,12,10,0.65)',
                 lineHeight:    1.7,
                 letterSpacing: '0.02em',
               }}>

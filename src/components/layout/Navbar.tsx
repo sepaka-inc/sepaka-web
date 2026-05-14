@@ -381,7 +381,7 @@ export default function Navbar() {
               fontWeight: 500,
               letterSpacing: '0.15em',
               textTransform: 'uppercase',
-              color: 'rgba(13,12,10,0.4)',
+              color: 'rgba(13,12,10,0.6)',
               textDecoration: 'none',
               marginTop: '2rem',
             }}

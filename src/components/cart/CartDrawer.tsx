@@ -93,7 +93,7 @@ export default function CartDrawer() {
               fontSize:      '0.6875rem',
               letterSpacing: '0.2em',
               textTransform: 'uppercase',
-              color:         'rgba(13,12,10,0.4)',
+              color:         'rgba(13,12,10,0.6)',
               marginBottom:  '0.25rem',
             }}>
               Your Cart
@@ -118,13 +118,13 @@ export default function CartDrawer() {
               border:      'none',
               cursor:      'pointer',
               padding:     '0.25rem',
-              color:       'rgba(13,12,10,0.4)',
+              color:       'rgba(13,12,10,0.6)',
               fontSize:    '1.125rem',
               fontFamily:  'var(--font-inter), system-ui, sans-serif',
               transition:  `color 200ms ${EASE}`,
             }}
             onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.color = '#0D0C0A' }}
-            onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.color = 'rgba(13,12,10,0.4)' }}
+            onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.color = 'rgba(13,12,10,0.6)' }}
           >
             ✕
           </button>
@@ -146,7 +146,7 @@ export default function CartDrawer() {
               fontSize:      '1.375rem',
               fontStyle:     'italic',
               fontWeight:    400,
-              color:         'rgba(13,12,10,0.35)',
+              color:         'rgba(13,12,10,0.55)',
               letterSpacing: '-0.01em',
             }}>
               Nothing here yet.
@@ -242,7 +242,7 @@ export default function CartDrawer() {
                     <p style={{
                       fontFamily:    'var(--font-inter), system-ui, sans-serif',
                       fontSize:      '0.875rem',
-                      color:         'rgba(13,12,10,0.45)',
+                      color:         'rgba(13,12,10,0.65)',
                       letterSpacing: '0.02em',
                       lineHeight:    1.6,
                       marginBottom:  '5px',
@@ -293,7 +293,7 @@ export default function CartDrawer() {
                       <span style={{
                         fontFamily:    'var(--font-inter), system-ui, sans-serif',
                         fontSize:      '0.625rem',
-                        color:         'rgba(13,12,10,0.4)',
+                        color:         'rgba(13,12,10,0.6)',
                         letterSpacing: '0.04em',
                       }}>
                         × {item.quantity}
