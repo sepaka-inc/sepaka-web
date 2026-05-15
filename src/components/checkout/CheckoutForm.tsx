@@ -304,20 +304,30 @@ export default function CheckoutForm({ clientSecret, total }: Props) {
 
   return (
     <>
-    <div style={{
-      display:       'flex',
-      flexDirection: isMobile ? 'column' : 'row',
-      minHeight:     isMobile ? 'auto' : 'calc(100dvh - 60px)',
-      maxWidth:      '1400px',
-      margin:        '0 auto',
-      width:         '100%',
-    }}>
+    <style>{`
+      @media (max-width: 768px) {
+        .checkout-wrapper {
+          flex-direction: column !important;
+        }
+        .checkout-summary {
+          width: 100% !important;
+        }
+      }
+    `}</style>
+    <div
+      className="checkout-wrapper"
+      style={{
+        display:       'flex',
+        flexDirection: 'row',
+        alignItems:    'flex-start',
+        gap:           '64px',
+        maxWidth:      '1200px',
+        margin:        '0 auto',
+        padding:       '60px 40px',
+      }}
+    >
       {/* Left — steps */}
-      <div style={{
-        flex:        1,
-        padding:     'clamp(2rem, 5vw, 4rem) clamp(1.5rem, 5vw, 4rem)',
-        borderRight: isMobile ? 'none' : '0.5px solid #E8E4DE',
-      }}>
+      <div style={{ flex: 1, minWidth: 0 }}>
 
         {/* Step indicators */}
         <div style={{
@@ -841,24 +851,11 @@ export default function CheckoutForm({ clientSecret, total }: Props) {
         )}
       </div>
 
-      {/* Right — order summary desktop only */}
-      {!isMobile && (
-        <div style={{ width: 'clamp(380px, 44vw, 520px)', flexShrink: 0 }}>
-          <OrderSummary items={items} province={province || null} total={total} />
-        </div>
-      )}
-    </div>
-
-    {/* Mobile — full order summary below form */}
-    {isMobile && (
-      <div style={{
-        borderTop:       '0.5px solid #E8E4DE',
-        backgroundColor: '#F5F2EC',
-        padding:         'clamp(2rem, 5vw, 3rem) clamp(1.5rem, 5vw, 2rem)',
-      }}>
+      {/* Right — order summary */}
+      <div className="checkout-summary" style={{ width: '420px', flexShrink: 0 }}>
         <OrderSummary items={items} province={province || null} total={total} />
       </div>
-    )}
+    </div>
     </>
   )
 }
