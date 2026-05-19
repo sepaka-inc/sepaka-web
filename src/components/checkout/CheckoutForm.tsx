@@ -184,7 +184,10 @@ export default function CheckoutForm({ clientSecret, total }: Props) {
         return
       }
 
-      if (paymentIntent?.status === 'succeeded') {
+      console.log('PaymentIntent status:', paymentIntent?.status)
+
+      if (paymentIntent && (paymentIntent.status === 'succeeded' || paymentIntent.status === 'requires_capture')) {
+        console.log('Calling confirm-order API...')
         const confirmRes = await fetch('/api/confirm-order', {
           method:  'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -210,6 +213,7 @@ export default function CheckoutForm({ clientSecret, total }: Props) {
           `/order-confirmation?orderId=${confirmData.orderId}&email=${encodeURIComponent(email)}&name=${encodeURIComponent(customerFullName || email)}`
         )
       } else {
+        console.log('Unexpected paymentIntent status:', paymentIntent?.status)
         setIsLoading(false)
       }
     } catch {
