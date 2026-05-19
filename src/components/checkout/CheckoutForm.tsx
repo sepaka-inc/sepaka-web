@@ -162,7 +162,12 @@ export default function CheckoutForm({ clientSecret, total }: Props) {
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault()
-    if (!stripe || !elements) return
+    console.log('handleSubmit fired', { stripe: !!stripe, elements: !!elements })
+    if (!stripe || !elements) {
+      console.error('Stripe not ready:', { stripe: !!stripe, elements: !!elements })
+      setError('Payment system not ready. Please refresh and try again.')
+      return
+    }
 
     setIsLoading(true)
     setError(null)
@@ -178,6 +183,13 @@ export default function CheckoutForm({ clientSecret, total }: Props) {
             billing_details: {
               name:  customerFullName || email,
               email,
+              address: {
+                country:     'CA',
+                line1:       address,
+                city,
+                state:       province,
+                postal_code: postalCode,
+              },
             },
           },
         },
