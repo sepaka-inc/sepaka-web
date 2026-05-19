@@ -4,6 +4,7 @@ import { stripe } from '@/lib/stripe'
 import { createServerSupabaseClient } from '@/lib/supabase-server'
 import { CartItem } from '@/types/cart'
 import { ProvinceCode, extractTax } from '@/lib/tax'
+import { brandConfig } from '@/config/brand'
 
 const resend = new Resend(process.env.RESEND_API_KEY)
 
@@ -91,7 +92,7 @@ export async function POST(req: NextRequest) {
                 Your order is confirmed.
               </h1>
               <p style="font-style: italic; color: rgba(13,12,10,0.5); margin-bottom: 2rem;">
-                Worn in. Never out.
+                ${brandConfig.tagline}
               </p>
               <p style="font-family: Arial, sans-serif; font-size: 0.875rem; color: rgba(13,12,10,0.7); line-height: 1.6; margin-bottom: 1.5rem;">
                 Thank you, ${customerName}. Your order has been received and will be crafted to order.
@@ -115,20 +116,20 @@ export async function POST(req: NextRequest) {
               </div>
               <div style="background: #F5F2EC; padding: 1.25rem; margin-bottom: 2rem;">
                 <p style="font-family: Arial, sans-serif; font-size: 0.875rem; color: rgba(13,12,10,0.7); line-height: 1.6; margin: 0;">
-                  <strong>Made to order.</strong> Your jacket will be crafted after this confirmation.
-                  Production takes 4–6 weeks. We'll send you updates at each stage.
+                  <strong>${brandConfig.production.model}.</strong> ${brandConfig.production.notice}
+                  We'll send you updates at each stage.
                 </p>
               </div>
               <p style="font-family: Arial, sans-serif; font-size: 0.75rem; color: rgba(13,12,10,0.6);">
-                Questions? Contact us at hello@sepaka.ca
+                Questions? Contact us at ${brandConfig.email}
               </p>
             </div>
           `
 
     const { data: emailData, error: emailError } = await resend.emails.send({
-      from:    'SEPAKA <hello@sepaka.ca>',
+      from:    `${brandConfig.name} <${brandConfig.email}>`,
       to:      customerEmail,
-      subject: `Your SEPAKA order is confirmed`,
+      subject: `Your ${brandConfig.name} order is confirmed`,
       html,
     })
 

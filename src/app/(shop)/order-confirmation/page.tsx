@@ -4,6 +4,7 @@ import { useSearchParams } from 'next/navigation'
 import { Suspense, useEffect } from 'react'
 import Link from 'next/link'
 import { useCart } from '@/context/CartContext'
+import { brandConfig } from '@/config/brand'
 
 const EASE = 'cubic-bezier(0.25, 0.1, 0.25, 1)'
 
@@ -75,7 +76,7 @@ function ConfirmationContent() {
           color:         'rgba(13,12,10,0.65)',
           marginBottom:  '2rem',
         }}>
-          Worn in. Never out.
+          {brandConfig.tagline}
         </p>
 
         {/* Bronze divider */}
@@ -132,7 +133,7 @@ function ConfirmationContent() {
               letterSpacing: '0.08em',
               textTransform: 'uppercase',
             }}>
-              Made to Order
+              {brandConfig.production.model}
             </span>
           </div>
           <p style={{
@@ -141,7 +142,7 @@ function ConfirmationContent() {
             color:      'rgba(13,12,10,0.6)',
             lineHeight: 1.6,
           }}>
-            Production takes 4–6 weeks. You&apos;ll receive email updates at each stage — when cutting begins, when stitching is complete, and when your jacket ships.
+            Production takes {brandConfig.production.leadTime}. You&apos;ll receive email updates at each stage — when cutting begins, when stitching is complete, and when your jacket ships.
           </p>
         </div>
 
@@ -173,7 +174,7 @@ function ConfirmationContent() {
           marginTop:     '1.5rem',
           letterSpacing: '0.02em',
         }}>
-          Questions? <a href="mailto:hello@sepaka.ca" style={{ color: '#0D0C0A', textDecoration: 'underline' }}>hello@sepaka.ca</a>
+          Questions? <a href={`mailto:${brandConfig.email}`} style={{ color: '#0D0C0A', textDecoration: 'underline' }}>{brandConfig.email}</a>
         </p>
       </div>
     </main>

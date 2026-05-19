@@ -11,6 +11,8 @@ import {
 import { useCart } from '@/context/CartContext'
 import { ProvinceCode, PROVINCE_NAMES } from '@/lib/tax'
 import OrderSummary from './OrderSummary'
+import { brandConfig } from '@/config/brand'
+import Link from 'next/link'
 
 const EASE = 'cubic-bezier(0.25, 0.1, 0.25, 1)'
 
@@ -227,7 +229,7 @@ export default function CheckoutForm({ clientSecret, total }: Props) {
         if (!confirmRes.ok) {
           const errData = await confirmRes.json()
           console.error('confirm-order failed:', errData)
-          setError('Order confirmation failed. Please contact hello@sepaka.ca')
+          setError(`Order confirmation failed. Please contact ${brandConfig.email}`)
           setIsLoading(false)
           return
         }
@@ -266,7 +268,7 @@ export default function CheckoutForm({ clientSecret, total }: Props) {
         {
           headers: {
             'Accept-Language': 'en',
-            'User-Agent':       'SEPAKA/1.0 (hello@sepaka.ca)',
+            'User-Agent':       `${brandConfig.name}/1.0 (${brandConfig.email})`,
           },
         }
       )
@@ -865,10 +867,10 @@ export default function CheckoutForm({ clientSecret, total }: Props) {
               letterSpacing: '0.02em',
             }}>
               By placing your order you agree to our{' '}
-              <span style={{ textDecoration: 'underline', cursor: 'pointer' }}>Terms</span>
+              <Link href={brandConfig.legal.termsUrl} style={{ color: 'inherit', textDecoration: 'underline' }}>Terms</Link>
               {' '}and{' '}
-              <span style={{ textDecoration: 'underline', cursor: 'pointer' }}>Privacy Policy</span>.
-              All jackets are made to order and non-refundable.
+              <Link href={brandConfig.legal.privacyUrl} style={{ color: 'inherit', textDecoration: 'underline' }}>Privacy Policy</Link>.
+              {' '}{brandConfig.legal.refundPolicy}
             </p>
           </form>
         )}
