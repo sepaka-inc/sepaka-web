@@ -4,8 +4,7 @@ import { useEffect, useState } from 'react'
 import { loadStripe } from '@stripe/stripe-js'
 import { Elements } from '@stripe/react-stripe-js'
 import { useCart } from '@/context/CartContext'
-import { useRouter } from 'next/navigation'
-import CheckoutForm, { isOrderCompleteRef } from '@/components/checkout/CheckoutForm'
+import CheckoutForm from '@/components/checkout/CheckoutForm'
 import Link from 'next/link'
 
 const stripePromise = loadStripe(
@@ -14,17 +13,11 @@ const stripePromise = loadStripe(
 
 export default function CheckoutPage() {
   const { items } = useCart()
-  const router = useRouter()
   const [clientSecret, setClientSecret] = useState<string | null>(null)
   const [total, setTotal] = useState(0)
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
-    if (items.length === 0 && !isOrderCompleteRef.current) {
-      router.push('/shop')
-      return
-    }
-
     fetch('/api/create-payment-intent', {
       method:  'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -37,7 +30,7 @@ export default function CheckoutPage() {
         setTotal(data.total)
       })
       .catch(() => setError('Failed to initialise checkout'))
-  }, [items, router])
+  }, [items])
 
   if (error) {
     return (

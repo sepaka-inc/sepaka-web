@@ -60,16 +60,13 @@ interface Props {
   total: number
 }
 
-/** Shared with checkout page so empty-cart redirect does not run after order completion */
-export const isOrderCompleteRef = { current: false }
-
 export default function CheckoutForm({ clientSecret, total }: Props) {
   void clientSecret
 
   const stripe   = useStripe()
   const elements = useElements()
   const router   = useRouter()
-  const { items, clearCart } = useCart()
+  const { items } = useCart()
 
   const [step,       setStep]       = useState<Step>(1)
   const [isMobile,   setIsMobile]   = useState(false)
@@ -93,14 +90,7 @@ export default function CheckoutForm({ clientSecret, total }: Props) {
   }[]>([])
   const [showSuggestions, setShowSuggestions] = useState(false)
   const addressDebounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
-  const isOrderComplete = useRef(false)
   const [province,   setProvince]   = useState<ProvinceCode | ''>('')
-
-  useEffect(() => {
-    if (items.length === 0 && !isOrderComplete.current) {
-      router.push('/shop')
-    }
-  }, [items, router])
 
   useEffect(() => {
     const check = () => setIsMobile(window.innerWidth < 768)
@@ -184,6 +174,12 @@ export default function CheckoutForm({ clientSecret, total }: Props) {
         elements,
         confirmParams: {
           return_url: `${window.location.origin}/order-confirmation`,
+          payment_method_data: {
+            billing_details: {
+              name:  customerFullName || email,
+              email,
+            },
+          },
         },
         redirect: 'if_required',
       })
@@ -232,9 +228,6 @@ export default function CheckoutForm({ clientSecret, total }: Props) {
         }
 
         const orderId = confirmData.orderId ?? 'unknown'
-        isOrderComplete.current = true
-        isOrderCompleteRef.current = true
-        clearCart()
         setIsLoading(false)
         router.push(
           `/order-confirmation?orderId=${orderId}&email=${encodeURIComponent(email)}&name=${encodeURIComponent(customerFullName || email)}`

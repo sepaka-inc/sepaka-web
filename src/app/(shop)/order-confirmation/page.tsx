@@ -1,15 +1,21 @@
 'use client'
 
 import { useSearchParams } from 'next/navigation'
-import { Suspense } from 'react'
+import { Suspense, useEffect } from 'react'
 import Link from 'next/link'
+import { useCart } from '@/context/CartContext'
 
 const EASE = 'cubic-bezier(0.25, 0.1, 0.25, 1)'
 
 function ConfirmationContent() {
+  const { clearCart } = useCart()
   const params = useSearchParams()
   const name   = params.get('name') ?? 'there'
   const email  = params.get('email') ?? ''
+
+  useEffect(() => {
+    clearCart()
+  }, [])
 
   return (
     <main style={{
