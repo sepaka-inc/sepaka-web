@@ -41,8 +41,10 @@ export async function POST(req: NextRequest) {
       )
     }
 
-    const total = paymentIntent.amount / 100
-    const { taxAmount, taxRate } = extractTax(total, province)
+    const totalCents = paymentIntent.amount
+    const totalDollars = paymentIntent.amount / 100
+    const { taxAmount, taxRate } = extractTax(totalDollars, province)
+    const totalDisplay = totalDollars.toLocaleString('en-CA', { minimumFractionDigits: 2 })
 
     // Save order to Supabase
     const supabase = createServerSupabaseClient()
@@ -56,10 +58,10 @@ export async function POST(req: NextRequest) {
           shipping_address:         shippingAddress,
           province,
           items,
-          subtotal:   total,
+          subtotal:   totalCents,
           tax_rate:   taxRate,
-          tax_amount: taxAmount,
-          total,
+          tax_amount: Math.round(taxAmount * 100),
+          total:      totalCents,
           status:     'confirmed',
         },
       ])
@@ -93,7 +95,7 @@ export async function POST(req: NextRequest) {
               <div style="border-top: 0.5px solid #E8E4DE; padding-top: 1rem; margin-bottom: 2rem;">
                 <div style="display: flex; justify-content: space-between; font-family: Arial, sans-serif; font-size: 1rem; font-weight: 500;">
                   <span>Total</span>
-                  <span>$${total.toLocaleString()} CAD</span>
+                  <span>$${totalDisplay} CAD</span>
                 </div>
                 <p style="font-family: Arial, sans-serif; font-size: 0.75rem; color: rgba(13,12,10,0.65); margin-top: 0.25rem;">
                   Tax included in price

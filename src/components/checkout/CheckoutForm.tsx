@@ -206,6 +206,14 @@ export default function CheckoutForm({ clientSecret, total }: Props) {
           }),
         })
 
+        if (!confirmRes.ok) {
+          const errData = await confirmRes.json()
+          console.error('confirm-order failed:', errData)
+          setError('Order confirmation failed. Please contact hello@sepaka.ca')
+          setIsLoading(false)
+          return
+        }
+
         const confirmData: { orderId?: string } = await confirmRes.json()
         clearCart()
         setIsLoading(false)
