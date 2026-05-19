@@ -48,23 +48,33 @@ export async function POST(req: NextRequest) {
 
     // Save order to Supabase
     const supabase = createServerSupabaseClient()
+
+    // Check if order already exists for this payment intent
+    const { data: existingOrder } = await supabase
+      .from('orders')
+      .select('id')
+      .eq('stripe_payment_intent_id', paymentIntentId)
+      .single()
+
+    if (existingOrder) {
+      return NextResponse.json({ success: true, orderId: existingOrder.id })
+    }
+
     const { data: insertData, error: insertError } = await supabase
       .from('orders')
-      .insert([
-        {
-          stripe_payment_intent_id: paymentIntentId,
-          customer_name:            customerName,
-          customer_email:           customerEmail,
-          shipping_address:         shippingAddress,
-          province,
-          items,
-          subtotal:   totalCents,
-          tax_rate:   taxRate,
-          tax_amount: Math.round(taxAmount * 100),
-          total:      totalCents,
-          status:     'confirmed',
-        },
-      ])
+      .insert([{
+        stripe_payment_intent_id: paymentIntentId,
+        customer_name:            customerName,
+        customer_email:           customerEmail,
+        shipping_address:         shippingAddress,
+        province,
+        items,
+        subtotal:   totalCents,
+        tax_rate:   taxRate,
+        tax_amount: Math.round(taxAmount * 100),
+        total:      totalCents,
+        status:     'confirmed',
+      }])
       .select()
       .single()
 
