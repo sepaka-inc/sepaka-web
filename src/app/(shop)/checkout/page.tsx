@@ -5,7 +5,7 @@ import { loadStripe } from '@stripe/stripe-js'
 import { Elements } from '@stripe/react-stripe-js'
 import { useCart } from '@/context/CartContext'
 import { useRouter } from 'next/navigation'
-import CheckoutForm from '@/components/checkout/CheckoutForm'
+import CheckoutForm, { isOrderCompleteRef } from '@/components/checkout/CheckoutForm'
 import Link from 'next/link'
 
 const stripePromise = loadStripe(
@@ -20,7 +20,7 @@ export default function CheckoutPage() {
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
-    if (items.length === 0) {
+    if (items.length === 0 && !isOrderCompleteRef.current) {
       router.push('/shop')
       return
     }
