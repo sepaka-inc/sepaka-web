@@ -170,29 +170,16 @@ export default function CheckoutForm({ clientSecret, total }: Props) {
     const customerFullName = `${firstName} ${lastName}`.trim()
 
     try {
-      const { error: stripeError, paymentIntent } = await stripe.confirmPayment({
+      const { error, paymentIntent } = await stripe.confirmPayment({
         elements,
-        redirect: 'if_required',
         confirmParams: {
           return_url: `${window.location.origin}/order-confirmation`,
-          payment_method_data: {
-            billing_details: {
-              name:  customerFullName || email,
-              email,
-              address: {
-                line1:       address,
-                city,
-                state:       province as ProvinceCode,
-                postal_code: postalCode,
-                country:     'CA',
-              },
-            },
-          },
         },
+        redirect: 'if_required',
       })
 
-      if (stripeError) {
-        setError(stripeError.message ?? 'Payment failed. Please try again.')
+      if (error) {
+        setError(error.message ?? 'Payment failed. Please try again.')
         setIsLoading(false)
         return
       }
