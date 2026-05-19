@@ -110,7 +110,7 @@ export default function CheckoutPage() {
               colorPrimary:    '#0D0C0A',
               colorBackground: '#FFFFFF',
               colorText:       '#0D0C0A',
-              colorDanger:     'rgba(180,40,40,0.85)',
+              colorDanger:     '#B42828',
               borderRadius:    '0px',
               fontSizeBase:    '15px',
               spacingUnit:     '4px',

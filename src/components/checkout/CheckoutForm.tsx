@@ -68,7 +68,7 @@ export default function CheckoutForm({ clientSecret, total }: Props) {
   const stripe   = useStripe()
   const elements = useElements()
   const router   = useRouter()
-  const { items } = useCart()
+  const { items, clearCart } = useCart()
 
   const [step,       setStep]       = useState<Step>(1)
   const [isMobile,   setIsMobile]   = useState(false)
@@ -392,16 +392,66 @@ export default function CheckoutForm({ clientSecret, total }: Props) {
               <ExpressCheckoutElement
                 onConfirm={async (event) => {
                   if (!stripe || !elements) return
-                  const { error: expressError } = await stripe.confirmPayment({
+
+                  const { error: expressError, paymentIntent } = await stripe.confirmPayment({
                     elements,
                     redirect: 'if_required',
                     confirmParams: {
                       return_url: `${window.location.origin}/order-confirmation`,
+                      payment_method_data: {
+                        billing_details: {
+                          name: event.billingDetails?.name || email,
+                          email: event.billingDetails?.email || email,
+                          address: {
+                            country: 'CA',
+                            line1: event.shippingAddress?.address?.line1 || '',
+                            city: event.shippingAddress?.address?.city || '',
+                            state: event.shippingAddress?.address?.state || '',
+                            postal_code: event.shippingAddress?.address?.postal_code || '',
+                          },
+                        },
+                      },
                     },
                   })
+
                   if (expressError) {
                     setError(expressError.message ?? 'Express checkout failed')
                     event.paymentFailed({ message: expressError.message })
+                    return
+                  }
+
+                  if (paymentIntent?.status === 'succeeded' || paymentIntent?.status === 'requires_capture') {
+                    const customerFullName = event.billingDetails?.name || email
+                    const customerEmail = event.billingDetails?.email || email
+
+                    const confirmRes = await fetch('/api/confirm-order', {
+                      method: 'POST',
+                      headers: { 'Content-Type': 'application/json' },
+                      body: JSON.stringify({
+                        paymentIntentId: paymentIntent.id,
+                        customerName:    customerFullName,
+                        customerEmail,
+                        shippingAddress: {
+                          line1:      event.shippingAddress?.address?.line1 || '',
+                          city:       event.shippingAddress?.address?.city || '',
+                          province:   event.shippingAddress?.address?.state || 'AB',
+                          postalCode: event.shippingAddress?.address?.postal_code || '',
+                        },
+                        province: (event.shippingAddress?.address?.state || 'AB') as ProvinceCode,
+                        items,
+                      }),
+                    })
+
+                    if (confirmRes.ok) {
+                      const confirmData = await confirmRes.json()
+                      localStorage.setItem('sepaka-last-order', JSON.stringify(items))
+                      clearCart()
+                      router.push(
+                        `/order-confirmation?orderId=${confirmData.orderId ?? 'unknown'}&email=${encodeURIComponent(customerEmail)}&name=${encodeURIComponent(customerFullName)}`
+                      )
+                    } else {
+                      setError('Order confirmation failed. Please contact hello@sepaka.ca')
+                    }
                   }
                 }}
                 options={{
