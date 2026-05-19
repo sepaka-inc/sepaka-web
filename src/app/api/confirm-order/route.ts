@@ -1,8 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { Resend } from 'resend'
 import { stripe } from '@/lib/stripe'
 import { createServerSupabaseClient } from '@/lib/supabase-server'
 import { CartItem } from '@/types/cart'
 import { ProvinceCode, extractTax } from '@/lib/tax'
+
+const resend = new Resend(process.env.RESEND_API_KEY)
 
 export async function POST(req: NextRequest) {
   try {
@@ -38,47 +41,37 @@ export async function POST(req: NextRequest) {
       )
     }
 
-    const total     = paymentIntent.amount / 100
+    const total = paymentIntent.amount / 100
     const { taxAmount, taxRate } = extractTax(total, province)
 
     // Save order to Supabase
     const supabase = createServerSupabaseClient()
-    const { data: order, error } = await supabase
+    const { data: insertData, error: insertError } = await supabase
       .from('orders')
-      .insert({
-        stripe_payment_intent_id: paymentIntentId,
-        customer_name:            customerName,
-        customer_email:           customerEmail,
-        shipping_address:         shippingAddress,
-        province,
-        items,
-        subtotal:   total,
-        tax_rate:   taxRate,
-        tax_amount: taxAmount,
-        total,
-        status:     'confirmed',
-      })
+      .insert([
+        {
+          stripe_payment_intent_id: paymentIntentId,
+          customer_name:            customerName,
+          customer_email:           customerEmail,
+          shipping_address:         shippingAddress,
+          province,
+          items,
+          subtotal:   total,
+          tax_rate:   taxRate,
+          tax_amount: taxAmount,
+          total,
+          status:     'confirmed',
+        },
+      ])
       .select()
       .single()
 
-    if (error) {
-      console.error('Supabase insert error:', error)
-      // Don't fail — payment already succeeded
+    if (insertError) {
+      console.error('Supabase insert error:', JSON.stringify(insertError))
+      return NextResponse.json({ error: 'Database error' }, { status: 500 })
     }
 
-    // Send confirmation email via Resend
-    try {
-      await fetch('https://api.resend.com/emails', {
-        method: 'POST',
-        headers: {
-          'Content-Type':  'application/json',
-          'Authorization': `Bearer ${process.env.RESEND_API_KEY}`,
-        },
-        body: JSON.stringify({
-          from:    'SEPAKA <hello@sepaka.ca>',
-          to:      customerEmail,
-          subject: `Your SEPAKA order is confirmed`,
-          html: `
+    const html = `
             <div style="font-family: Georgia, serif; max-width: 600px; margin: 0 auto; padding: 2rem; color: #0D0C0A;">
               <h1 style="font-size: 1.5rem; font-weight: 400; letter-spacing: -0.02em; margin-bottom: 0.5rem;">
                 Your order is confirmed.
@@ -108,7 +101,7 @@ export async function POST(req: NextRequest) {
               </div>
               <div style="background: #F5F2EC; padding: 1.25rem; margin-bottom: 2rem;">
                 <p style="font-family: Arial, sans-serif; font-size: 0.875rem; color: rgba(13,12,10,0.7); line-height: 1.6; margin: 0;">
-                  <strong>Made to order.</strong> Your jacket will be crafted after this confirmation. 
+                  <strong>Made to order.</strong> Your jacket will be crafted after this confirmation.
                   Production takes 4–6 weeks. We'll send you updates at each stage.
                 </p>
               </div>
@@ -116,17 +109,22 @@ export async function POST(req: NextRequest) {
                 Questions? Contact us at hello@sepaka.ca
               </p>
             </div>
-          `,
-        }),
-      })
-    } catch (emailError) {
-      console.error('Email send error:', emailError)
-      // Don't fail the order if email fails
+          `
+
+    const { data: emailData, error: emailError } = await resend.emails.send({
+      from:    'SEPAKA <hello@sepaka.ca>',
+      to:      customerEmail,
+      subject: `Your SEPAKA order is confirmed`,
+      html,
+    })
+
+    if (emailError) {
+      console.error('Resend error:', JSON.stringify(emailError))
     }
 
     return NextResponse.json({
       success: true,
-      orderId: order?.id,
+      orderId: insertData.id,
     })
   } catch (error) {
     console.error('Confirm order error:', error)
