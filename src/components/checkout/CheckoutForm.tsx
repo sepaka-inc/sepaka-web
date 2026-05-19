@@ -460,6 +460,19 @@ export default function CheckoutForm({ clientSecret, total }: Props) {
                     applePay:  'black',
                     googlePay: 'black',
                   },
+                  shippingAddressRequired: true,
+                  billingAddressRequired: true,
+                  shippingRates: [
+                    {
+                      id:          'complimentary',
+                      displayName: 'Complimentary Delivery',
+                      amount:      0,
+                      deliveryEstimate: {
+                        minimum: { unit: 'week', value: 4 },
+                        maximum: { unit: 'week', value: 6 },
+                      },
+                    },
+                  ],
                 }}
               />
             </div>
