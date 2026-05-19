@@ -41,10 +41,12 @@ export async function POST(req: NextRequest) {
       )
     }
 
-    const totalCents = paymentIntent.amount
     const totalDollars = paymentIntent.amount / 100
     const { taxAmount, taxRate } = extractTax(totalDollars, province)
-    const totalDisplay = totalDollars.toLocaleString('en-CA', { minimumFractionDigits: 2 })
+    const totalDisplay = totalDollars.toLocaleString('en-CA', {
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
+    })
 
     // Save order to Supabase
     const supabase = createServerSupabaseClient()
@@ -69,10 +71,10 @@ export async function POST(req: NextRequest) {
         shipping_address:         shippingAddress,
         province,
         items,
-        subtotal:   totalCents,
+        subtotal:   totalDollars,
         tax_rate:   taxRate,
-        tax_amount: Math.round(taxAmount * 100),
-        total:      totalCents,
+        tax_amount: taxAmount,
+        total:      totalDollars,
         status:     'confirmed',
       }])
       .select()
