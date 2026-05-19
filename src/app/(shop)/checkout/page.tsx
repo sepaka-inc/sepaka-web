@@ -18,6 +18,8 @@ export default function CheckoutPage() {
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
+    if (items.length === 0) return
+
     fetch('/api/create-payment-intent', {
       method:  'POST',
       headers: { 'Content-Type': 'application/json' },
