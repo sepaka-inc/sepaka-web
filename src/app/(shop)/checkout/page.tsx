@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { loadStripe } from '@stripe/stripe-js'
 import { Elements } from '@stripe/react-stripe-js'
 import { useCart } from '@/context/CartContext'
@@ -12,13 +12,16 @@ const stripePromise = loadStripe(
 )
 
 export default function CheckoutPage() {
+  const hasInitialized = useRef(false)
   const { items } = useCart()
   const [clientSecret, setClientSecret] = useState<string | null>(null)
   const [total, setTotal] = useState(0)
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
+    if (hasInitialized.current) return
     if (items.length === 0) return
+    hasInitialized.current = true
 
     fetch('/api/create-payment-intent', {
       method:  'POST',
