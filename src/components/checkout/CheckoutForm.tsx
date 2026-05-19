@@ -243,6 +243,7 @@ export default function CheckoutForm({ clientSecret, total }: Props) {
 
         const orderId = confirmData.orderId ?? 'unknown'
         setIsLoading(false)
+        localStorage.setItem('sepaka-last-order', JSON.stringify(items))
         router.push(
           `/order-confirmation?orderId=${orderId}&email=${encodeURIComponent(email)}&name=${encodeURIComponent(customerFullName || email)}`
         )
