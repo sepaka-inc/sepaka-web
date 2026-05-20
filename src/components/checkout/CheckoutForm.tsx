@@ -414,6 +414,8 @@ export default function CheckoutForm({ clientSecret, total }: Props) {
                     },
                   })
 
+                  console.log('Express paymentIntent:', paymentIntent?.status, expressError?.message)
+
                   if (expressError) {
                     setError(expressError.message ?? 'Express checkout failed')
                     event.paymentFailed({ message: expressError.message })
@@ -423,6 +425,8 @@ export default function CheckoutForm({ clientSecret, total }: Props) {
                   if (paymentIntent?.status === 'succeeded' || paymentIntent?.status === 'requires_capture') {
                     const customerFullName = event.billingDetails?.name || email
                     const customerEmail = event.billingDetails?.email || email
+
+                    console.log('Calling confirm-order from express checkout...')
 
                     const confirmRes = await fetch('/api/confirm-order', {
                       method: 'POST',
@@ -441,6 +445,8 @@ export default function CheckoutForm({ clientSecret, total }: Props) {
                         items,
                       }),
                     })
+
+                    console.log('Express confirm-order response status:', confirmRes.status)
 
                     if (confirmRes.ok) {
                       const confirmData = await confirmRes.json()
