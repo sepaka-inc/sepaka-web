@@ -29,7 +29,55 @@ function ConfirmationContent() {
   } | null>(null)
 
   useEffect(() => {
-    clearCart()
+    const urlParams = new URLSearchParams(window.location.search)
+    const paymentIntentId = urlParams.get('payment_intent')
+    const redirectStatus = urlParams.get('redirect_status')
+
+    // Handle Stripe express checkout redirect
+    if (paymentIntentId && redirectStatus === 'succeeded') {
+      let expressItems: {
+        name: string
+        variantName: string
+        slug: string
+        size: string
+        price: number
+        quantity: number
+      }[] = []
+      try {
+        const stored = localStorage.getItem('sepaka-cart')
+        if (stored) expressItems = JSON.parse(stored)
+      } catch {}
+
+      fetch('/api/confirm-order', {
+        method:  'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          paymentIntentId,
+          customerName:    urlParams.get('name') ?? 'Customer',
+          customerEmail:   urlParams.get('email') ?? '',
+          shippingAddress: {
+            line1:      '',
+            city:       '',
+            province:   'AB',
+            postalCode: '',
+          },
+          province: 'AB',
+          items:    expressItems,
+        }),
+      })
+        .then(res => res.json())
+        .then(data => {
+          if (data.orderId) {
+            localStorage.setItem('sepaka-last-order', JSON.stringify(expressItems))
+            clearCart()
+            if (expressItems.length > 0) setLastOrder(expressItems[0])
+          }
+        })
+        .catch(err => console.error('Express confirm-order error:', err))
+    } else {
+      clearCart()
+    }
+
     try {
       const stored = localStorage.getItem('sepaka-last-order')
       if (stored) {
@@ -38,7 +86,7 @@ function ConfirmationContent() {
         localStorage.removeItem('sepaka-last-order')
       }
     } catch {}
-  }, [])
+  }, [clearCart])
 
   return (
     <main style={{
