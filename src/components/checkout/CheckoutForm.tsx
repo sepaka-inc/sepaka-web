@@ -95,14 +95,38 @@ export default function CheckoutForm({ clientSecret, total }: Props) {
   const addressDebounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const [province,   setProvince]   = useState<ProvinceCode | ''>('')
   const [userId, setUserId] = useState<string | null>(null)
+  const isLoggedIn = !!userId
 
   useEffect(() => {
     const supabase = createClient()
-    supabase.auth.getUser().then(({ data }) => {
+    supabase.auth.getUser().then(async ({ data }) => {
       if (data.user) {
         setUserId(data.user.id)
         setEmail(data.user.email ?? '')
         setStep(2)
+
+        const { data: profileData } = await supabase
+          .from('profiles')
+          .select('first_name, last_name')
+          .eq('id', data.user.id)
+          .single()
+
+        if (profileData?.first_name) setFirstName(profileData.first_name)
+        if (profileData?.last_name) setLastName(profileData.last_name)
+
+        const { data: addressData } = await supabase
+          .from('addresses')
+          .select('*')
+          .eq('user_id', data.user.id)
+          .eq('is_default', true)
+          .maybeSingle()
+
+        if (addressData) {
+          setAddress(addressData.line1)
+          setCity(addressData.city)
+          setProvince(addressData.province as ProvinceCode)
+          setPostalCode(addressData.postal_code)
+        }
       }
     })
   }, [])
@@ -116,18 +140,19 @@ export default function CheckoutForm({ clientSecret, total }: Props) {
 
   const stepIndicator = (n: Step, label: string) => {
     const isCompleted = n < step
+    const canNavigate = isCompleted && !(isLoggedIn && n === 1)
     return (
       <div
-        onClick={isCompleted ? () => { setError(null); setStep(n) } : undefined}
+        onClick={canNavigate ? () => { setError(null); setStep(n) } : undefined}
         style={{
           display:    'flex',
           alignItems: 'center',
           gap:        '0.5rem',
-          cursor:     isCompleted ? 'pointer' : 'default',
+          cursor:     canNavigate ? 'pointer' : 'default',
           transition: 'opacity 200ms ease',
         }}
-        onMouseEnter={isCompleted ? e => { e.currentTarget.style.opacity = '0.7' } : undefined}
-        onMouseLeave={isCompleted ? e => { e.currentTarget.style.opacity = '1' } : undefined}
+        onMouseEnter={canNavigate ? e => { e.currentTarget.style.opacity = '0.7' } : undefined}
+        onMouseLeave={canNavigate ? e => { e.currentTarget.style.opacity = '1' } : undefined}
       >
       <div style={{
         width:           '24px',
@@ -818,24 +843,27 @@ export default function CheckoutForm({ clientSecret, total }: Props) {
               Continue to Payment
             </button>
 
-            <button
-              onClick={() => { setError(null); setStep(1) }}
-              style={{
-                width:          '100%',
-                padding:        '0.75rem',
-                background:     'none',
-                border:         'none',
-                cursor:         'pointer',
-                fontFamily:     'var(--font-inter), system-ui, sans-serif',
-                fontSize:       '0.625rem',
-                letterSpacing:  '0.1em',
-                textTransform:  'uppercase',
-                color:          'rgba(13,12,10,0.6)',
-                textDecoration: 'underline',
-              }}
-            >
-              ← Back
-            </button>
+            {!isLoggedIn && (
+              <button
+                type="button"
+                onClick={() => { setError(null); setStep(1) }}
+                style={{
+                  width:          '100%',
+                  padding:        '0.75rem',
+                  background:     'none',
+                  border:         'none',
+                  cursor:         'pointer',
+                  fontFamily:     'var(--font-inter), system-ui, sans-serif',
+                  fontSize:       '0.625rem',
+                  letterSpacing:  '0.1em',
+                  textTransform:  'uppercase',
+                  color:          'rgba(13,12,10,0.6)',
+                  textDecoration: 'underline',
+                }}
+              >
+                ← Back
+              </button>
+            )}
 
             {error && (
               <p style={{
