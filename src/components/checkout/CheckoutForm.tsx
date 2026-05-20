@@ -105,27 +105,14 @@ export default function CheckoutForm({ clientSecret, total }: Props) {
         setEmail(data.user.email ?? '')
         setStep(2)
 
-        const { data: profileData } = await supabase
-          .from('profiles')
-          .select('first_name, last_name')
-          .eq('id', data.user.id)
-          .single()
-
-        if (profileData?.first_name) setFirstName(profileData.first_name)
-        if (profileData?.last_name) setLastName(profileData.last_name)
-
-        const { data: addressData } = await supabase
-          .from('addresses')
-          .select('*')
-          .eq('user_id', data.user.id)
-          .eq('is_default', true)
-          .maybeSingle()
-
-        if (addressData) {
-          setAddress(addressData.line1)
-          setCity(addressData.city)
-          setProvince(addressData.province as ProvinceCode)
-          setPostalCode(addressData.postal_code)
+        const profileRes = await fetch('/api/account/profile').then(r => r.json())
+        if (profileRes.profile?.first_name) setFirstName(profileRes.profile.first_name)
+        if (profileRes.profile?.last_name) setLastName(profileRes.profile.last_name)
+        if (profileRes.address) {
+          setAddress(profileRes.address.line1)
+          setCity(profileRes.address.city)
+          setProvince(profileRes.address.province as ProvinceCode)
+          setPostalCode(profileRes.address.postal_code)
         }
       }
     })
