@@ -349,7 +349,7 @@ function JacketPanel({ jacket, index }: { jacket: Jacket; index: number }) {
 
 export default function Collection() {
   return (
-    <section aria-label="SEPAKA jacket collection">
+    <section aria-label="SEPAKA jacket collection" style={{ paddingTop: 'clamp(0.25rem, 0.5vw, 0.4375rem)' }}>
       {jackets.map((jacket, index) => (
         <JacketPanel key={jacket.id} jacket={jacket} index={index} />
       ))}

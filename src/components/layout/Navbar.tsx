@@ -103,8 +103,8 @@ export default function Navbar() {
             <Image
               src="/images/brand/sepaka-logo.svg"
               alt="SEPAKA"
-              width={100}
-              height={28}
+              width={120}
+              height={34}
               priority
             />
           </Link>
