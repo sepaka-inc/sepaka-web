@@ -9,6 +9,7 @@ import {
   ExpressCheckoutElement,
 } from '@stripe/react-stripe-js'
 import { useCart } from '@/context/CartContext'
+import { createClient } from '@/lib/supabase-client'
 import { ProvinceCode, PROVINCE_NAMES } from '@/lib/tax'
 import OrderSummary from './OrderSummary'
 import { brandConfig } from '@/config/brand'
@@ -93,6 +94,18 @@ export default function CheckoutForm({ clientSecret, total }: Props) {
   const [showSuggestions, setShowSuggestions] = useState(false)
   const addressDebounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const [province,   setProvince]   = useState<ProvinceCode | ''>('')
+  const [userId, setUserId] = useState<string | null>(null)
+
+  useEffect(() => {
+    const supabase = createClient()
+    supabase.auth.getUser().then(({ data }) => {
+      if (data.user) {
+        setUserId(data.user.id)
+        setEmail(data.user.email ?? '')
+        setStep(2)
+      }
+    })
+  }, [])
 
   useEffect(() => {
     const check = () => setIsMobile(window.innerWidth < 768)
@@ -223,6 +236,7 @@ export default function CheckoutForm({ clientSecret, total }: Props) {
             },
             province: province as ProvinceCode,
             items,
+            userId: userId ?? undefined,
           }),
         })
 
@@ -439,6 +453,7 @@ export default function CheckoutForm({ clientSecret, total }: Props) {
                         },
                         province: (event.shippingAddress?.address?.state || 'AB') as ProvinceCode,
                         items,
+                        userId: userId ?? undefined,
                       }),
                     })
 

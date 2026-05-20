@@ -18,6 +18,7 @@ export async function POST(req: NextRequest) {
       shippingAddress,
       province,
       items,
+      userId,
     }: {
       paymentIntentId: string
       customerName: string
@@ -30,6 +31,7 @@ export async function POST(req: NextRequest) {
       }
       province: ProvinceCode
       items: CartItem[]
+      userId?: string
     } = body
 
     // Verify payment succeeded with Stripe
@@ -84,6 +86,33 @@ export async function POST(req: NextRequest) {
     if (insertError) {
       console.error('Supabase insert error:', JSON.stringify(insertError))
       return NextResponse.json({ error: 'Database error' }, { status: 500 })
+    }
+
+    if (userId) {
+      const { error: updateError } = await supabase
+        .from('orders')
+        .update({ user_id: userId })
+        .eq('id', insertData.id)
+      if (updateError) console.error('Order user_id update error:', JSON.stringify(updateError))
+
+      const { data: existingAddress, error: addressCheckError } = await supabase
+        .from('addresses')
+        .select('id')
+        .eq('user_id', userId)
+        .maybeSingle()
+      if (addressCheckError) console.error('Address check error:', JSON.stringify(addressCheckError))
+
+      if (!existingAddress) {
+        const { error: addressInsertError } = await supabase.from('addresses').insert({
+          user_id: userId,
+          line1: shippingAddress.line1,
+          city: shippingAddress.city,
+          province: shippingAddress.province,
+          postal_code: shippingAddress.postalCode,
+          is_default: true,
+        })
+        if (addressInsertError) console.error('Address insert error:', JSON.stringify(addressInsertError))
+      }
     }
 
     const productImageBase = 'https://sepaka-web.vercel.app/images/products'

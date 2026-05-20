@@ -5,6 +5,9 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { usePathname } from 'next/navigation'
 import { useCart } from '@/context/CartContext'
+import { createClient } from '@/lib/supabase-client'
+import type { User } from '@supabase/supabase-js'
+import AuthPanel from '@/components/auth/AuthPanel'
 
 const NAV_LINKS = [
   { label: 'Shop', href: '/shop' },
@@ -19,8 +22,32 @@ export default function Navbar() {
   const [visible, setVisible] = useState(true)
   const [menuOpen, setMenuOpen] = useState(false)
   const [isMobile, setIsMobile] = useState(false)
+  const [user, setUser] = useState<User | null>(null)
+  const [showAccountMenu, setShowAccountMenu] = useState(false)
+  const [authPanelOpen, setAuthPanelOpen] = useState(false)
+  const [authPanelView, setAuthPanelView] = useState<'login' | 'register' | 'check-email'>('login')
   const lastScrollY = useRef(0)
   const ticking = useRef(false)
+
+  useEffect(() => {
+    const supabase = createClient()
+    supabase.auth.getUser().then(({ data }) => setUser(data.user))
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null)
+    })
+    return () => subscription.unsubscribe()
+  }, [])
+
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      const target = e.target as HTMLElement
+      if (!target.closest('#account-menu-wrapper')) {
+        setShowAccountMenu(false)
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [])
 
   // Detect mobile
   useEffect(() => {
@@ -187,32 +214,150 @@ export default function Navbar() {
 
             {/* Account — desktop only */}
             {!isMobile && (
-              <button
-                type="button"
-                aria-label="Account"
-                style={{
-                  background: 'none',
-                  border: 'none',
-                  cursor: 'pointer',
-                  padding: '0.25rem',
-                  color: '#0D0C0A',
-                  opacity: 0.7,
-                }}
-              >
-                <svg
-                  width="18"
-                  height="18"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="1.25"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
+              user ? (
+                <div id="account-menu-wrapper" style={{ position: 'relative' }}>
+                  <button
+                    type="button"
+                    aria-label="Account"
+                    onClick={() => setShowAccountMenu(!showAccountMenu)}
+                    style={{
+                      background: 'none',
+                      border: 'none',
+                      cursor: 'pointer',
+                      padding: '4px',
+                      position: 'relative',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      color: '#0D0C0A',
+                      opacity: 0.7,
+                    }}
+                  >
+                    <svg
+                      width="18"
+                      height="18"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="1.25"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
+                      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                      <circle cx="12" cy="7" r="4" />
+                    </svg>
+                    <div style={{
+                      position: 'absolute',
+                      top: '0px',
+                      right: '0px',
+                      width: '6px',
+                      height: '6px',
+                      borderRadius: '50%',
+                      backgroundColor: '#8B5E3C',
+                      border: '1.5px solid #FFFFFF',
+                    }} />
+                  </button>
+
+                  {showAccountMenu && (
+                    <div style={{
+                      position: 'absolute',
+                      top: 'calc(100% + 12px)',
+                      right: 0,
+                      backgroundColor: '#FFFFFF',
+                      boxShadow: '0 4px 24px rgba(13,12,10,0.10)',
+                      minWidth: '160px',
+                      zIndex: 1000,
+                      padding: '8px 0',
+                    }}>
+                      <p style={{
+                        fontFamily: 'var(--font-inter), system-ui, sans-serif',
+                        fontSize: '0.6875rem',
+                        color: 'rgba(13,12,10,0.4)',
+                        letterSpacing: '0.05em',
+                        padding: '8px 20px 4px',
+                        margin: 0,
+                        textTransform: 'uppercase',
+                      }}>
+                        {user.user_metadata?.first_name || user.email?.split('@')[0]}
+                      </p>
+
+                      <div style={{ height: '0.5px', backgroundColor: '#F0EDE8', margin: '8px 0' }} />
+
+                      <Link
+                        href="/account"
+                        onClick={() => setShowAccountMenu(false)}
+                        style={{
+                          display: 'block',
+                          fontFamily: 'var(--font-inter), system-ui, sans-serif',
+                          fontSize: '0.8125rem',
+                          color: '#0D0C0A',
+                          padding: '8px 20px',
+                          textDecoration: 'none',
+                          letterSpacing: '0.02em',
+                        }}
+                      >
+                        My Account
+                      </Link>
+
+                      <button
+                        type="button"
+                        onClick={async () => {
+                          setShowAccountMenu(false)
+                          const supabase = createClient()
+                          await supabase.auth.signOut()
+                          window.location.href = '/'
+                        }}
+                        style={{
+                          display: 'block',
+                          width: '100%',
+                          textAlign: 'left',
+                          fontFamily: 'var(--font-inter), system-ui, sans-serif',
+                          fontSize: '0.8125rem',
+                          color: 'rgba(13,12,10,0.5)',
+                          padding: '8px 20px',
+                          background: 'none',
+                          border: 'none',
+                          cursor: 'pointer',
+                          letterSpacing: '0.02em',
+                        }}
+                      >
+                        Sign out
+                      </button>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <button
+                  type="button"
+                  aria-label="Account"
+                  onClick={() => { setAuthPanelView('login'); setAuthPanelOpen(true) }}
+                  style={{
+                    background: 'none',
+                    border: 'none',
+                    cursor: 'pointer',
+                    padding: '4px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    color: '#0D0C0A',
+                    opacity: 0.7,
+                  }}
                 >
-                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
-                  <circle cx="12" cy="7" r="4" />
-                </svg>
-              </button>
+                  <svg
+                    width="18"
+                    height="18"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="1.25"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                    <circle cx="12" cy="7" r="4" />
+                  </svg>
+                </button>
+              )
             )}
 
             {/* Cart — always visible */}
@@ -356,9 +501,11 @@ export default function Navbar() {
           ))}
 
           <Link
-            href="#"
+            href={user ? '/account' : '/account/login'}
             onClick={() => setMenuOpen(false)}
             style={{
+              position: 'relative',
+              display: 'inline-block',
               fontFamily: 'var(--font-bodoni), Georgia, serif',
               fontSize: 'clamp(2rem, 8vw, 3rem)',
               fontWeight: 400,
@@ -368,6 +515,18 @@ export default function Navbar() {
             }}
           >
             Account
+            {user && (
+              <span style={{
+                position: 'absolute',
+                top: '0.15em',
+                right: '-0.5em',
+                width: '6px',
+                height: '6px',
+                borderRadius: '50%',
+                backgroundColor: '#8B5E3C',
+                border: '1.5px solid #FFFFFF',
+              }} />
+            )}
           </Link>
 
           <Link
@@ -390,6 +549,12 @@ export default function Navbar() {
           </Link>
         </div>
       )}
+
+      <AuthPanel
+        isOpen={authPanelOpen}
+        onClose={() => setAuthPanelOpen(false)}
+        defaultView={authPanelView}
+      />
     </>
   )
 }
