@@ -1,9 +1,12 @@
 'use client'
 
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useCart } from '@/context/CartContext'
+import AuthPanel from '@/components/auth/AuthPanel'
+import { createClient } from '@/lib/supabase-client'
+import type { User } from '@supabase/supabase-js'
 
 const EASE = 'cubic-bezier(0.25, 0.1, 0.25, 1)'
 
@@ -17,6 +20,17 @@ export default function CartDrawer() {
   } = useCart()
 
   const drawerRef = useRef<HTMLDivElement>(null)
+  const [user, setUser] = useState<User | null>(null)
+  const [authPanelOpen, setAuthPanelOpen] = useState(false)
+
+  useEffect(() => {
+    const supabase = createClient()
+    supabase.auth.getUser().then(({ data }) => setUser(data.user ?? null))
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null)
+    })
+    return () => subscription.unsubscribe()
+  }, [])
 
   // Close on Escape
   useEffect(() => {
@@ -171,18 +185,28 @@ export default function CartDrawer() {
               Shop Jackets
             </Link>
 
-            <p style={{
-              fontFamily:    'var(--font-inter), system-ui, sans-serif',
-              fontSize:      '0.75rem',
-              color:         'rgba(13,12,10,0.7)',
-              letterSpacing: '0.04em',
-              textAlign:     'center',
-              cursor:        'pointer',
-              textDecoration:'underline',
-              marginTop:     '0.25rem',
-            }}>
-              Login or register
-            </p>
+            {!user && (
+              <button
+                type="button"
+                onClick={() => {
+                  closeCart()
+                  setTimeout(() => setAuthPanelOpen(true), 350)
+                }}
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  fontFamily: 'var(--font-inter), system-ui, sans-serif',
+                  fontSize: '0.75rem',
+                  color: 'rgba(13,12,10,0.5)',
+                  cursor: 'pointer',
+                  textDecoration: 'underline',
+                  letterSpacing: '0.02em',
+                  marginTop: '8px',
+                }}
+              >
+                Login or register
+              </button>
+            )}
           </div>
         )}
 
@@ -398,21 +422,36 @@ export default function CartDrawer() {
               View Cart
             </Link>
 
-            {/* Login */}
-            <p style={{
-              fontFamily:    'var(--font-inter), system-ui, sans-serif',
-              fontSize:      '0.75rem',
-              color:         'rgba(13,12,10,0.5)',
-              textAlign:     'center',
-              letterSpacing: '0.04em',
-              textDecoration:'underline',
-              cursor:        'pointer',
-            }}>
-              Login or register
-            </p>
+            {!user && (
+              <button
+                type="button"
+                onClick={() => {
+                  closeCart()
+                  setTimeout(() => setAuthPanelOpen(true), 350)
+                }}
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  fontFamily: 'var(--font-inter), system-ui, sans-serif',
+                  fontSize: '0.75rem',
+                  color: 'rgba(13,12,10,0.5)',
+                  cursor: 'pointer',
+                  textDecoration: 'underline',
+                  letterSpacing: '0.02em',
+                }}
+              >
+                Login or register
+              </button>
+            )}
           </div>
         )}
       </div>
+
+      <AuthPanel
+        isOpen={authPanelOpen}
+        onClose={() => setAuthPanelOpen(false)}
+        defaultView="login"
+      />
     </>
   )
 }
